@@ -1,0 +1,5 @@
+rootProject.name = 'core'
+include 'security'
+include 'UserCenter'
+include 'ActivityManager'
+
