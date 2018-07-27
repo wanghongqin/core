@@ -12,16 +12,4 @@ public class UserController {
     public Principal user(Principal principal) {
         return principal;
     }
-
-    @GetMapping("/user/mee")
-    public Principal user() {
-        Principal principal = new Principal() {
-            @Override
-            public String getName() {
-                return null;
-            }
-        };
-        return principal;
-    }
-
 }

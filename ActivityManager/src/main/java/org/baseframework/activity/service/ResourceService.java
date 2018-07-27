@@ -1,23 +1,23 @@
 package org.baseframework.activity.service;
 
-import org.baseframework.activity.models.Activity;
+import org.baseframework.activity.models.Resource;
 import org.springframework.data.domain.Page;
 
 import javax.servlet.http.HttpServletRequest;
 
-public interface ActivityService {
+public interface ResourceService {
 
-    Page<Activity> queryLimit(HttpServletRequest request, int page, int limit);
+    Page<Resource> queryLimit(HttpServletRequest request, int page, int limit);
 
     String queryLimitStr(HttpServletRequest request, int page, int limit);
 
-    String Edit(Activity activity);
+    String Edit(Resource resource);
 
-    String Delete(Activity activity);
+    String Delete(Resource resource);
 
     String Delete(long Id);
 
     String findStrById(long Id);
 
-    Activity findById(long Id);
+    Resource findById(long Id);
 }
