@@ -1,4 +1,4 @@
-package org.baseframework.activity.repository;
+ package org.baseframework.activity.repository;
 
 
 import org.baseframework.activity.models.Resource;
@@ -11,4 +11,4 @@ public interface ResourceRepository extends JpaRepository<Resource,Long> {
 
     Page<Resource> findAll(Specification<Resource> spec, Pageable pageable);
 
-}
+} 
