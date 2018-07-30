@@ -39,6 +39,20 @@ public class FileHelper {
     }
 
     /**
+     * 删除文件
+     * @param path
+     * @return
+     */
+    public static boolean delete(String path) {
+        File file = new File(path);
+        if (file.exists()) {
+            return file.delete();
+        }
+        return false;
+    }
+
+
+    /**
      * 保存文件
      *
      * @param path    文件路径
@@ -159,8 +173,8 @@ public class FileHelper {
                     while (channel.read(buffer) != -1) {
                         int poisiton = buffer.position();
                         buffer.flip();
-                        buffer.get(contents,0,poisiton);
-                        strBuffer.append(new String(contents,0,poisiton,"utf-8"));
+                        buffer.get(contents, 0, poisiton);
+                        strBuffer.append(new String(contents, 0, poisiton, "utf-8"));
                         buffer.clear();
                     }
                     return strBuffer.toString();

@@ -20,4 +20,18 @@ public interface ResourceService {
     String findStrById(long Id);
 
     Resource findById(long Id);
+
+    /**
+     * 上传资源
+     * @param request
+     * @return
+     */
+    String UploadWithStr(HttpServletRequest request);
+
+    /**
+     * 上传资源
+     * @param request
+     * @return
+     */
+    Resource Upload(HttpServletRequest request);
 }
