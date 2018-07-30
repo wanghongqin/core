@@ -1,5 +1,4 @@
- package org.baseframework.activity.repository;
-
+package org.baseframework.activity.repository;
 
 import org.baseframework.activity.models.Resource;
 import org.springframework.data.domain.Page;
