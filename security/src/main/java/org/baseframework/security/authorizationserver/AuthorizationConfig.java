@@ -1,6 +1,7 @@
 package org.baseframework.security.authorizationserver;
 
 import com.zaxxer.hikari.HikariDataSource;
+import org.baseframework.security.domain.RedisTokenStore;
 import org.baseframework.security.service.Imp.UserServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -22,7 +23,6 @@ import org.springframework.security.oauth2.provider.code.AuthorizationCodeServic
 import org.springframework.security.oauth2.provider.code.InMemoryAuthorizationCodeServices;
 import org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory;
 import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 
 import javax.annotation.Resource;
 
@@ -37,8 +37,8 @@ public class AuthorizationConfig extends AuthorizationServerConfigurerAdapter {
     @Resource
     private RedisConnectionFactory redisConnectionFactory;
 
-    @Resource
-    private AuthorizationCodeServices authorizationCodeServices;
+//    @Resource
+//    private AuthorizationCodeServices authorizationCodeServices;
 
 
     @Resource
@@ -59,14 +59,14 @@ public class AuthorizationConfig extends AuthorizationServerConfigurerAdapter {
     }
 
 
-    @Bean
-    public TokenStore getJdbcTokenStore() {
-        return new JdbcTokenStore(dataSource);
-    }
-
-//    public  TokenStore getRedisTokenStore(){
-//        return  new RedisTokenStore(redisConnectionFactory);
+//    @Bean
+//    public TokenStore getJdbcTokenStore() {
+//        return new JdbcTokenStore(dataSource);
 //    }
+
+    public  TokenStore getRedisTokenStore(){
+        return  new RedisTokenStore(redisConnectionFactory);
+    }
 
     @Bean
     public ClientDetailsService clientDetailsService() {
@@ -83,8 +83,8 @@ public class AuthorizationConfig extends AuthorizationServerConfigurerAdapter {
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-        endpoints.tokenStore(getJdbcTokenStore())
-                .authorizationCodeServices(authorizationCodeServices)
+        endpoints.tokenStore(getRedisTokenStore())
+                .authorizationCodeServices(authorizationCodeServices())
                 .userDetailsService(userService)
                 .userApprovalHandler(userApprovalHandler())
                 .authenticationManager(authenticationManager);
@@ -104,7 +104,7 @@ public class AuthorizationConfig extends AuthorizationServerConfigurerAdapter {
     @Bean
     public UserApprovalHandler userApprovalHandler() {
         TokenStoreUserApprovalHandler userApprovalHandler = new TokenStoreUserApprovalHandler ();
-        userApprovalHandler.setTokenStore(getJdbcTokenStore());
+        userApprovalHandler.setTokenStore(getRedisTokenStore());
         userApprovalHandler.setClientDetailsService(clientDetailsService());
         userApprovalHandler.setRequestFactory(oAuth2RequestFactory());
         return userApprovalHandler;
