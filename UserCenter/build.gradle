@@ -2,7 +2,7 @@ group 'org.baseframework'
 version '1.0-SNAPSHOT'
 buildscript {
     ext {
-        springBootVersion = '2.0.3.RELEASE'
+        springBootVersion = '2.0.4.RELEASE'
     }
     repositories {
         mavenCentral()

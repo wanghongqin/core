@@ -1,7 +1,7 @@
 server:
     port: 10184
     servlet:
-       context-path: /
+       context-path: /oatuhserver
 
 datasource:
     url: jdbc:mysql://localhost:3306/oauth?characterEncoding=utf8

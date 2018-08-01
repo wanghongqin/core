@@ -1,5 +1,5 @@
 server:
-    port: 10186
+    port: 10188
     servlet:
         context-path: /ActivityManager
     session:

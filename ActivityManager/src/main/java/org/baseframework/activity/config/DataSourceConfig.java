@@ -12,7 +12,7 @@ import java.util.Properties;
 
 /**
  * 数据库相关配置
- * 王鸿钦
+ * @author 王鸿钦
  */
 
 @Configuration

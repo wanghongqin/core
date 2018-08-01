@@ -40,6 +40,7 @@ public class FileHelper {
 
     /**
      * 删除文件
+     *
      * @param path
      * @return
      */
@@ -123,6 +124,12 @@ public class FileHelper {
         }
     }
 
+    /**
+     * 追加文本
+     * @param path
+     * @param content
+     * @return
+     */
     public static boolean append(String path, String content) {
         FileOutputStream outputStream = null;
         FileChannel channel = null;
@@ -163,34 +170,32 @@ public class FileHelper {
         if (exits(path)) {
             RandomAccessFile file = null;
             FileChannel channel = null;
-            synchronized (path) {
+            try {
+                file = new RandomAccessFile(path, "r");
+                channel = file.getChannel();
+                byte[] contents = new byte[1024];
+                ByteBuffer buffer = ByteBuffer.allocate(1024);
+                StringBuffer strBuffer = new StringBuffer();
+                while (channel.read(buffer) != -1) {
+                    int poisiton = buffer.position();
+                    buffer.flip();
+                    buffer.get(contents, 0, poisiton);
+                    strBuffer.append(new String(contents, 0, poisiton, "utf-8"));
+                    buffer.clear();
+                }
+                return strBuffer.toString();
+            } catch (IOException e) {
+                return "";
+            } finally {
                 try {
-                    file = new RandomAccessFile(path, "r");
-                    channel = file.getChannel();
-                    byte[] contents = new byte[1024];
-                    ByteBuffer buffer = ByteBuffer.allocate(1024);
-                    StringBuffer strBuffer = new StringBuffer();
-                    while (channel.read(buffer) != -1) {
-                        int poisiton = buffer.position();
-                        buffer.flip();
-                        buffer.get(contents, 0, poisiton);
-                        strBuffer.append(new String(contents, 0, poisiton, "utf-8"));
-                        buffer.clear();
+                    if (channel != null) {
+                        channel.close();
                     }
-                    return strBuffer.toString();
+                    if (file != null) {
+                        file.close();
+                    }
                 } catch (IOException e) {
                     return "";
-                } finally {
-                    try {
-                        if (channel != null) {
-                            channel.close();
-                        }
-                        if (file != null) {
-                            file.close();
-                        }
-                    } catch (IOException e) {
-                        return "";
-                    }
                 }
             }
         } else {
