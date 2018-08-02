@@ -61,9 +61,10 @@ public class AuthorizationConfig extends AuthorizationServerConfigurerAdapter {
 
 //    @Bean
 //    public TokenStore getJdbcTokenStore() {
-//        return new JdbcTokenStore(dataSource);
+//        return new JdbcTokenStore(dataSource);//不能同时配置两个TokenStore bean
 //    }
 
+    @Bean
     public  TokenStore getRedisTokenStore(){
         return  new RedisTokenStore(redisConnectionFactory);
     }
