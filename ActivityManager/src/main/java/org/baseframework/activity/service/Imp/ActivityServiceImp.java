@@ -1,6 +1,8 @@
 package org.baseframework.activity.service.Imp;
 
+import org.apache.commons.lang3.StringUtils;
 import org.baseframework.activity.comm.JsonHelper;
+import org.baseframework.activity.comm.Table;
 import org.baseframework.activity.models.Activity;
 import org.baseframework.activity.repository.ActivityRepository;
 import org.baseframework.activity.service.ActivityService;
@@ -12,7 +14,14 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ActivityServiceImp implements ActivityService {
@@ -22,25 +31,48 @@ public class ActivityServiceImp implements ActivityService {
 
     @Override
     public Page<Activity> queryLimit(HttpServletRequest request, int page, int limit) {
+        String activityName = request.getParameter("activityName");
+        String startTime = request.getParameter("startTime");
         //查询规则定义
-        Specification<Activity> specification = (Specification<Activity>)(root,query,criteriaBuilder)->{return  null;};
+        Specification<Activity> specification = (Specification<Activity>) (root, query, criteriaBuilder) ->
+        {
+            List<Predicate> list = new ArrayList<Predicate>();
+            if (!StringUtils.isBlank(activityName)) {
+                Path activityNamepath = root.get("activityName");
+                list.add(criteriaBuilder.like(activityNamepath, "%" + activityName + "%"));
+            }
+            if (!StringUtils.isBlank(startTime)) {
+                Path startTimepath = root.get("startTime");
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                try {
+                    list.add(criteriaBuilder.lessThanOrEqualTo(startTimepath, new Timestamp(format.parse(startTime).getTime())));
+                } catch (ParseException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+            Predicate[] p = new Predicate[list.size()];
+            return criteriaBuilder.and(list.toArray(p));
+        };
         //排序
-        Sort sort = new Sort(Sort.Direction.DESC,"addTime");
-        Pageable pageable = PageRequest.of(page-1,limit,sort);
-        Page<Activity> pages = activityRepository.findAll(specification,pageable);
+        Sort sort = new Sort(Sort.Direction.DESC, "addTime");
+        Pageable pageable = PageRequest.of(page - 1, limit, sort);
+        Page<Activity> pages = activityRepository.findAll(specification, pageable);
         return pages;
     }
 
 
     @Override
-    public String queryLimitStr(HttpServletRequest request, int page, int limit) {
-        Page<Activity> pages =  this.queryLimit(request, page, limit);
-        return JsonHelper.objectToStr(pages.getContent());
+    public Table<Activity> queryLimitStr(HttpServletRequest request, int page, int limit) {
+        Page<Activity> pages = this.queryLimit(request, page, limit);
+        Table<Activity> table = new Table<Activity>();
+        table.setDatas(pages.getContent());
+        table.setTotal(pages.getTotalElements());
+        return table;
     }
 
     @Override
     public String Edit(Activity activity) {
-        Activity  model = activityRepository.saveAndFlush(activity);
+        Activity model = activityRepository.saveAndFlush(activity);
         return null;
     }
 

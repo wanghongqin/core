@@ -1,6 +1,8 @@
 package org.baseframework.activity.apicontrollers;
 
+import org.baseframework.activity.models.Activity;
 import org.baseframework.activity.service.ActivityService;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,8 +16,8 @@ public class ActivityApiController {
     @Resource
     private ActivityService activityService;
 
-    @RequestMapping("/queryLimit")
-    public String queryLimit(int page,int limit,HttpServletRequest request){
-        return  activityService.queryLimitStr(request,page,limit);
+    @RequestMapping(value = "/queryLimit")
+    public Page<Activity> queryLimit(int page, int pagesize, HttpServletRequest request){
+        return  activityService.queryLimit(request,page,pagesize);
     }
 }

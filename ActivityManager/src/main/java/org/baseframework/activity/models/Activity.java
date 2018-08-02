@@ -1,5 +1,6 @@
 package org.baseframework.activity.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import org.baseframework.activity.models.extend.EActivityState;
@@ -54,6 +55,7 @@ public class Activity extends EntityBase {
     @Column(name = "startTime", nullable = false)
     @Getter
     @Setter
+    @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Timestamp startTime;
 
     /**

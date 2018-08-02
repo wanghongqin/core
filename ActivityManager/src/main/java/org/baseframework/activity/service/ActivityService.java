@@ -1,5 +1,6 @@
 package org.baseframework.activity.service;
 
+import org.baseframework.activity.comm.Table;
 import org.baseframework.activity.models.Activity;
 import org.springframework.data.domain.Page;
 
@@ -9,7 +10,7 @@ public interface ActivityService {
 
     Page<Activity> queryLimit(HttpServletRequest request, int page, int limit);
 
-    String queryLimitStr(HttpServletRequest request, int page, int limit);
+    Table<Activity> queryLimitStr(HttpServletRequest request, int page, int limit);
 
     String Edit(Activity activity);
 

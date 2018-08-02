@@ -49,8 +49,6 @@ public class AuthorizationConfig extends AuthorizationServerConfigurerAdapter {
     @Qualifier("authenticationManagerBean")
     private AuthenticationManager authenticationManager;
 
-    public AuthorizationConfig() {
-    }
 
 
     @Override
@@ -80,6 +78,7 @@ public class AuthorizationConfig extends AuthorizationServerConfigurerAdapter {
 
         return new InMemoryAuthorizationCodeServices();
     }
+
 
 
     @Override
