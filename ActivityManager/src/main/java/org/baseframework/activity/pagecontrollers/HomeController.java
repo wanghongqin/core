@@ -10,14 +10,14 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.List;
 
 @Controller
-@RequestMapping("/Activity")
-public class ActivityController {
+@RequestMapping("/Home")
+public class HomeController {
 
     @GetMapping("/Index")
     public ModelAndView Index(Authentication principal) {
         ModelAndView view = new ModelAndView();
         List<SimpleGrantedAuthority> list = (List<SimpleGrantedAuthority>) principal.getAuthorities();
-        view.setViewName("/Activity/Index");
+        view.setViewName("/Home/index");
         return view;
     }
 }

@@ -17,7 +17,8 @@ public class ActivityApiController {
     private ActivityService activityService;
 
     @RequestMapping(value = "/queryLimit")
-    public Page<Activity> queryLimit(int page, int pagesize, HttpServletRequest request){
-        return  activityService.queryLimit(request,page,pagesize);
+    public Page<Activity> queryLimit(int currentPage, int pagesize, HttpServletRequest request){
+        return  activityService.queryLimit(request,currentPage
+                ,pagesize);
     }
 }
