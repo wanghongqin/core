@@ -87,4 +87,9 @@ public class Activity extends EntityBase {
     @Getter
     @Setter
     private List<ActivityResource> activityResources;
+
+    @Getter
+    @Setter
+    @OneToMany(mappedBy = "activity", cascade = { CascadeType.MERGE, CascadeType.REMOVE }, fetch = FetchType.LAZY)
+    private List<ActivityRegistration> activityRegistrations;
 }
