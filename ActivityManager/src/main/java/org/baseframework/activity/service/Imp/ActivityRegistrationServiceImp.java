@@ -38,6 +38,13 @@ public class ActivityRegistrationServiceImp implements ActivityRegistrationServi
         if (activity == null)
             return "失败";
 
+        if (activity.getActivityAttach() != null) {
+            long number = activity.getActivityAttach().getAttendNumber();
+            if (activity.getActivityRegistrations() != null)
+                if (activity.getActivityRegistrations().size() >= number)
+                    return "失败";
+        }
+
         String registrationName = request.getParameter("registrationName");
         String phone = request.getParameter("phone");
 

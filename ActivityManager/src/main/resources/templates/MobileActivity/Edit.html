@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="renderer" content="webkit">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<title>活动编辑</title>
+	<!-- 引入样式 -->
+	<link rel="stylesheet" href="https://unpkg.com/vant/lib/vant-css/index.css">
+
+	<!-- 引入组件 -->
+	<script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+	<script src="https://unpkg.com/vant/lib/vant.min.js"></script>
+	<script src="../../static/js/vue2-editor.js"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+	<style type="text/css">
+		#app{
+			position: absolute;
+			width: 100%;
+			height: 100%;
+		}
+		.content {
+			padding: 15px 20px;
+			margin-top: 51px;
+		}
+
+		.van-tabs--line .van-tabs__wrap {
+			display: none;
+		}
+
+		.van-tabs--line {
+			padding-top: 10px;
+		}
+
+		.cell {
+			margin-top: -1px;
+		}
+
+		.van-field .van-cell__title {
+			max-width: 100px;
+		}
+
+		.ql-toolbar {
+			display: none;
+		}
+
+		.quillWrapper {
+			width: 100%;
+		}
+
+		.ql-editor {
+			min-height: auto !important;
+			height: 100px !important;
+			padding: 0px !important;
+		}
+
+		.ql-toolbar.ql-snow+.ql-container.ql-snow {
+			border: none !important;
+		}
+
+		.ql-editor.ql-blank:before {
+			color: rgba(0, 0, 0, 0.35) !important;
+			font-style: normal !important;
+			left: 0px !important;
+			font-size: 0.85rem;
+		}
+
+		.van-button--bottom-action {
+			margin-top: 20px;
+			color: #fff !important;
+			background-color: #4b0 !important;
+			border: 1px solid #4b0 !important;
+		}
+
+		.header {
+			position: fixed;
+			top: 0px;
+			width: 100%;
+			z-index: 9999;
+		}
+
+		.steps {
+			width: 90%;
+			padding: 0px 5%;
+		}
+		.disable{
+			display: none;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="app">
+		<div class="header">
+			<van-steps :active="active" class="steps">
+				<van-step>活动基本信息</van-step>
+				<van-step>活动附加信息</van-step>
+			</van-steps>
+		</div>
+		<div class="content">
+			<van-tabs v-model="active" swipeable>
+				<van-tab>
+					<van-cell-group>
+						<van-field v-model="activitydata.activityName" required label="活动名称" placeholder="请输入活动名称" />
+					</van-cell-group>
+					<van-cell-group class="cell">
+						<div class="van-cell van-cell--required van-hairline van-field">
+							<div class="van-cell__title">
+								<span>活动内容</span>
+							</div>
+							<div class="van-cell__value">
+								<div class="van-field__body">
+									<vue-editor v-model="activitydata.activityContent" placeholder="请输入活动内容"></vue-editor>
+								</div>
+							</div>
+						</div>
+					</van-cell-group>
+					<van-cell-group class="cell">
+						<van-field v-model="activitytype" label="活动类型" placeholder="请选择活动类型" readonly required @click="activitytypeshow=true" />
+						<van-field v-model="activitydata.activityType" type="hidden" />
+					</van-cell-group>
+					
+					<van-cell-group class="cell">
+						<van-field v-model="activitynature" label="活动性质" placeholder="请选择活动性质" readonly required @click="activitynatureshow=true" />
+						<van-field v-model="activitydata.activityNature" type="hidden" />
+					</van-cell-group>
+					
+					<van-cell-group class="cell">
+						<van-field v-model="liability" label="负责人" placeholder="请选择负责人" readonly required @click="liabilityIdshow=true" />
+						<van-field v-model="activitydata.liabilityId" type="hidden" />
+					</van-cell-group>
+
+					<van-cell-group class="cell">
+						<van-field v-model="activitydata.startTime" label="开始时间" placeholder="请选择开始时间" readonly required @click="timeshow=true" />
+					</van-cell-group>
+
+					<van-cell-group class="cell">
+						<div class="van-cell van-hairline van-field">
+							<div class="van-cell__title">
+								<span>活动描述</span>
+							</div>
+							<div class="van-cell__value">
+								<div class="van-field__body">
+									<vue-editor v-model="activitydata.remark" placeholder="请输入描述"></vue-editor>
+								</div>
+							</div>
+						</div>
+					</van-cell-group>
+					<van-button type="default" bottom-action @click="submitdata">提交</van-button>
+				</van-tab>
+				<van-tab>
+
+					<van-cell-group :class="className">
+						<van-field v-model="activityAttach.attendNumber" label="参与人数" readonly placeholder="请输入参与人数" required @click="setAttendValue();"
+						/>
+					</van-cell-group>
+
+					<van-cell-group :class="classPoint" ref="signIdPoint">
+						<van-field v-model="activityAttach.signIdPoint" label="签到积分" readonly placeholder="请输入签到积分" required @click="setsignIdPointValue();"
+						/>
+					</van-cell-group>
+
+					<van-cell-group class="cell">
+						<van-field v-model="activityAttach.imagePoint" label="上传资源积分" readonly placeholder="请输入上传资源积分" required @click="setimagePointValue();"
+						/>
+					</van-cell-group>
+
+					<van-cell-group class="cell">
+						<van-field v-model="activityAttach.enableImagePoint" label="使用资源积分" readonly placeholder="请输入使用资源积分" required @click="setenableImagePointValue();"
+						/>
+					</van-cell-group>
+
+				</van-tab>
+			</van-tabs>
+			<van-popup v-model="activitytypeshow" position="bottom">
+				<van-picker title="活动类型" :columns="activitytypecolumns" show-toolbar @confirm="setActivitytype" @cancel="activitytypeshow=false"
+				/>
+			</van-popup>
+			<van-popup v-model="liabilityIdshow" position="bottom">
+				<van-picker title="负责人" :columns="liabilitycolumns" show-toolbar @confirm="setLiability" @cancel="liabilityIdshow=false"
+				/>
+			</van-popup>
+			
+			<van-popup v-model="activitynatureshow" position="bottom">
+				<van-picker title="活动性质" :columns="activitynaturecolumns" show-toolbar @confirm="setLiability" @cancel="activitynatureshow=false"
+				/>
+			</van-popup>
+
+			<van-popup v-model="timeshow" position="bottom">
+				<van-datetime-picker v-model="Time" title="年-月-日-时-分" type="datetime" @confirm="setStartTime" @cancel="timeshow=false" />
+			</van-popup>
+			
+			<van-number-keyboard :show="show" theme="custom" extra-key="" :type="type" close-button-text="完成" @blur="show=false"  @input="onInput" @delete="onDelete" />
+		</div>
+
+	</div>
+
+	<script type="text/javascript">
+		new Vue({
+			el: "#app",
+			data: {
+				active: 0,
+				timeshow: false,
+				liabilityIdshow: false,
+				activitytypeshow: false,
+				activitynatureshow:false,
+				show: false,
+				liability: "",
+				activitytype: "",
+				activitynature:'',
+				Time: "",
+				type: '',
+				liabilitycolumns: [],
+				activitytypecolumns: [],
+				activitynaturecolumns:[],
+				className: "disable",
+				classPoint: 'disable',
+				activitydata: {
+					Id: "",
+					activityName: "", 
+					addTime: "", 
+					createId: "", 
+					state: "",
+					startTime: "",
+					liabilityId: "",
+					activityType: "",
+					activityContent: "",
+					remark: "", 
+					activityNature:'',
+					
+				},
+				activityAttach:{
+					attendNumber: "",
+					signIdPoint: "",
+					imagePoint: "",
+					enableImagePoint: ""
+				}
+			},
+			mounted: function () {
+
+				var values = [];
+				values.push({
+					type: 'enroll',
+					text: '报名类活动'
+				});
+				values.push({
+					type: 'openup',
+					text: '公开类活动'
+				});
+				values.push({
+					type: 'invitation',
+					text: '邀请类活动'
+				});
+				this.activitytypecolumns.push({
+					values: values,
+					defaultIndex: 0
+				});
+			},
+			methods: {
+				submitdata: function () {
+					axios.post("",);
+					this.active++;
+				},
+				hides:function(){
+					this.show = false;
+				},
+				setStartTime: function (value) {
+					var context = this;
+					context.activitydata.startTime = value.format("yyyy-MM-dd hh:mm:ss")
+					context.timeshow = false;
+				},
+				setLiability: function (value) {
+					var context = this;
+					context.activitydata.liabilityId = value[0].id;
+					context.liability = value[0].text;
+					context.liabilityIdshow = false;
+				},
+				setActivitytype: function (value) {
+					var context = this;
+					context.activitydata.type = value[0].type;
+					context.activitytype = value[0].text;
+					context.activitytypeshow = false;
+					if (value[0].type == "enroll") {
+						context.className = "cell";
+						context.classPoint = "cell";
+					} else {
+						context.className = "disable";
+						context.classPoint = "disable";
+					}
+				},
+				setAttendValue: function () {
+					this.show = true;
+					this.type = "attendNumber";
+				},
+				setsignIdPointValue: function () {
+					this.show = true;
+					this.type = "signIdPoint";
+				},
+				setimagePointValue: function () {
+					this.show = true;
+					this.type = "imagePoint";
+				},
+				setenableImagePointValue: function () {
+					this.show = true;
+					this.type = "enableImagePoint";
+				},
+				onInput: function (value) {
+					var context = this;
+					switch (this.type) {
+						case "attendNumber":
+							var attendNumber = context.activityAttach.attendNumber;
+							if (attendNumber == 0) {
+								attendNumber = "";
+							}
+							context.activityAttach.attendNumber = attendNumber + "" + value;
+							break;
+						case "signIdPoint":
+							var signIdPoint = context.activityAttach.signIdPoint;
+							if (signIdPoint == 0) {
+								signIdPoint = "";
+							}
+							context.activityAttach.signIdPoint = signIdPoint + "" + value;
+							break;
+						case "imagePoint":
+							var imagePoint = context.activityAttach.imagePoint;
+							if (imagePoint == 0) {
+								imagePoint = "";
+							}
+							context.activityAttach.imagePoint = imagePoint + "" + value;
+							break;
+						case "enableImagePoint":
+							var enableImagePoint = context.activityAttach.enableImagePoint;
+							if (enableImagePoint == 0) {
+								enableImagePoint = "";
+							}
+							context.activityAttach.enableImagePoint = enableImagePoint + "" + value;
+							break;
+						default:
+							break;
+
+					}
+				},
+				onDelete: function () {
+					var context = this;
+					switch (this.type) {
+						case "attendNumber":
+							var attendNumber = context.activityAttach.attendNumber;
+							if (attendNumber.length > 1) {
+								attendNumber = attendNumber.substring(0, attendNumber.length - 1)
+							} else {
+								attendNumber = 0;
+							}
+							context.activityAttach.attendNumber = attendNumber;
+							break;
+						case "signIdPoint":
+							var signIdPoint = context.activityAttach.signIdPoint;
+							if (signIdPoint.length > 1) {
+								signIdPoint = signIdPoint.substring(0, signIdPoint.length - 1)
+							} else {
+								signIdPoint = 0;
+							}
+							context.activityAttach.signIdPoint = signIdPoint;
+							break;
+						case "imagePoint":
+							var imagePoint = context.activityAttach.imagePoint;
+							if (imagePoint.length > 1) {
+								imagePoint = imagePoint.substring(0, imagePoint.length - 1)
+							} else {
+								imagePoint = 0;
+							}
+							context.activityAttach.imagePoint = imagePoint;
+							break;
+						case "enableImagePoint":
+							var enableImagePoint = context.activityAttach.enableImagePoint;
+							if (enableImagePoint.length > 1) {
+								enableImagePoint = enableImagePoint.substring(0, enableImagePoint.length - 1)
+							} else {
+								enableImagePoint = 0;
+							}
+							context.activityAttach.enableImagePoint = enableImagePoint;
+							break;
+						default:
+							break;
+
+					}
+				},
+			},
+		})
+	</script>
+</body>
+
+</html>

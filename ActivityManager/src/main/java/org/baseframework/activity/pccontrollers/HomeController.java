@@ -1,4 +1,4 @@
-package org.baseframework.activity.pagecontrollers;
+package org.baseframework.activity.pccontrollers;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

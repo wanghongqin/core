@@ -3,7 +3,7 @@ package org.baseframework.activity.models.extend;
 import lombok.Getter;
 
 public enum EActivityType {
-    openup("公开类活动", "openup"), invitation("邀请类活动", "invitation"), enroll("报名类活动", "enroll");
+    enroll("报名类活动", "enroll"),openup("公开类活动", "openup"), invitation("邀请类活动", "invitation");
     @Getter
     private String dec;
     @Getter

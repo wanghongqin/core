@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="renderer" content="webkit">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<title>活动管理</title>
+	<!-- 引入样式 -->
+	<link rel="stylesheet" href="https://unpkg.com/vant/lib/vant-css/index.css">
+
+	<!-- 引入组件 -->
+	<script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+	<script src="https://unpkg.com/vant/lib/vant.min.js"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+	<style type="text/css">
+		.search {
+			position: fixed;
+			width: 100%;
+			top: 0px;
+			z-index: 999;
+		}
+
+		.van-search .van-cell {
+			padding: 5px 10px 5px 35px;
+		}
+
+		.value {
+			padding: 8px 15px;
+		}
+
+		.btn {
+			padding: 0 10px 0px 10px;
+			color: #06bf04;
+		}
+
+		.content {
+			margin-top: 46px;
+		}
+
+		.addaction {
+			position: fixed;
+			bottom: 25px;
+			right: 25px;
+		}
+
+		.addicon {
+			display: block;
+			font-size: 36px;
+			color: rgb(7, 110, 220);
+		}
+
+		.action-button {
+			text-align: center;
+			padding: 10px;
+			height: 65px;
+			overflow: hidden;
+		}
+
+		.action-button:active {
+			background: #CCCCCC;
+		}
+
+		.action-button i {
+			display: block;
+			font-size: 28px;
+			margin-bottom: 10px;
+			color: #333;
+		}
+
+		.action-button span {
+			font-size: 10px;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="app">
+		<div class="search">
+			<!-- <van-field v-model="key"   placeholder="请输入关键字">
+				<van-button slot="button" class="btn" type="primary"><van-icon name="search" /></van-button>
+			</van-field> -->
+			<van-search class="value" v-model="key" show-action @search="onSearch">
+				<div slot="action" class="btn" @click="onSearch">搜索</div>
+			</van-search>
+		</div>
+		<div class="content">
+			<van-pull-refresh v-model="isLoading" @refresh="onRefresh">
+				<van-list v-model="loading" :finished="finished" @load="onLoad">
+					<van-cell v-for="item in list" :key="item" :title="item + ''" @click="showAction=true" />
+				</van-list>
+			</van-pull-refresh>
+		</div>
+
+		<div class="addaction">
+			<van-icon class="addicon" name="add" @click="addActivity" />
+		</div>
+		<van-popup v-model="showAction" position="bottom">
+			<van-row>
+				<van-col span="6" v-if="getAuth('enroll')">
+					<div class="action-button" @click="onAction('enroll')">
+						<i class="van-icon van-icon-records"></i>
+						<span>报名</span>
+					</div>
+				</van-col>
+				<!--<van-col span="6" v-if="getAuth('noenroll')">
+						<div class="action-button" @click="onAction('noenroll')"><i class="fa fa-upload"></i><span>取消报名</span></div>
+					</van-col>-->
+				<van-col span="6" v-if="getAuth('Edit')">
+					<div class="action-button" @click="onAction('Edit')">
+						<i class="van-icon van-icon-edit"></i>
+						<span>编辑活动</span>
+					</div>
+				</van-col>
+				<van-col span="6" v-if="getAuth('uploadResoure')">
+					<div class="action-button" @click="onAction('uploadResoure')"> 
+						<i class="van-icon van-icon-photograph"></i>
+						<span>上传素材</span>
+					</div>
+				</van-col>
+				<van-col span="6" v-if="getAuth('uploadText')">
+					<div class="action-button" @click="onAction('uploadText')">
+						<i class="van-icon van-icon-add2"></i>
+						<span>添加文字</span>
+					</div>
+				</van-col>
+				<van-col span="6" v-if="getAuth('lookResoure')">
+					<div class="action-button" @click="onAction('lookResoure')">
+						<i class="van-icon van-icon-password-view"></i>
+						<span>查看资源</span>
+					</div>
+				</van-col>
+				<van-col span="6" v-if="getAuth('Delete')">
+					<div class="action-button" @click="onAction('Delete')"> 
+						<i class="van-icon van-icon-delete"></i>
+						<span>删除活动</span>
+					</div>
+				</van-col>
+				<van-col span="6" v-if="getAuth('addResoure')">
+					<div class="action-button" @click="onAction('addResoure')">
+						<i class="van-icon van-icon-certificate"></i>
+						<span>审核资源</span>
+					</div>
+				</van-col>
+				<van-col span="6" v-if="getAuth('addPart')">
+					<div class="action-button" @click="onAction('addPart')">
+						<i class="van-icon van-icon-add-o"></i>
+						<span>添加参与人</span>
+					</div>
+				</van-col>
+				<van-col span="6" v-if="getAuth('lookPart')">
+					<div class="action-button" @click="onAction('lookPart')">
+						<i class="van-icon van-icon-contact"></i>
+						<span>查看参与人</span>
+					</div>
+				</van-col>
+				<van-col span="6" v-if="getAuth('closeActivity')">
+					<div class="action-button" @click="onAction('closeActivity')">
+						<i class="van-icon van-icon-close"></i>
+						<span>关闭活动</span>
+					</div>
+				</van-col>
+				<van-col span="6" v-if="getAuth('openActivity')">
+					<div class="action-button" @click="onAction('openActivity')">
+						<i class="van-icon van-icon-edit-data"></i>
+						<span>打开活动</span>
+					</div>
+				</van-col>
+				<van-col span="6" v-if="getAuth('lookReport')">
+					<div class="action-button" @click="onAction('lookReport')">
+						<i class="van-icon van-icon-pending-orders"></i>
+						<span>查看报告</span>
+					</div>
+				</van-col>
+				<van-col span="6" v-if="getAuth('buildReport')">
+					<div class="action-button" @click="onAction('buildReport')">
+						<i class="van-icon van-icon-description"></i>
+						<span>生成报告</span>
+					</div>
+				</van-col>
+				<van-col span="6" v-if="getAuth('buildReportImage')">
+					<div class="action-button" @click="onAction('buildReportImage')">
+						<i class="van-icon van-icon-photo"></i>
+						<span>生成照片墙</span>
+					</div>
+				</van-col>
+				<van-col span="6" v-if="getAuth('shareActivity')">
+					<div class="action-button" @click="onAction('shareActivity')">
+						<i class="van-icon van-icon-share"></i>
+						<span>分享活动</span>
+					</div>
+				</van-col>
+			</van-row>
+		</van-popup>
+
+	</div>
+
+	<script type="text/javascript">
+		new Vue({
+			el: "#app",
+			data: {
+				key: '',
+				isLoading: false,
+				list: [],
+				loading: false,
+				finished: false,
+				showAction: false
+			},
+			created: function () {
+
+			},
+			methods: {
+				onSearch: function () {
+					alert(this.key)
+				},
+				onRefresh() {
+					setTimeout(() => {
+						this.$toast('刷新成功');
+						this.isLoading = false;
+						this.count++;
+					}, 500);
+				},
+				onLoad() {
+					setTimeout(() => {
+						for (let i = 0; i < 10; i++) {
+							this.list.push(this.list.length + 1);
+						}
+						this.loading = false;
+
+						if (this.list.length >= 40) {
+							this.finished = true;
+						}
+					}, 500);
+				},
+				addActivity: function () {
+					this.$toast('添加活动');
+				},
+				getAuth: function (v) {
+					return true;
+				}
+			},
+		})
+	</script>
+</body>
+
+</html>

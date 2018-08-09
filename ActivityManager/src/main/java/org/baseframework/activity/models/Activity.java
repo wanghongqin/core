@@ -78,6 +78,15 @@ public class Activity extends EntityBase {
     @Setter
     private EActivityType activityType;
 
+    @ManyToOne
+    @JoinColumn(name = "activityNatureId")
+    @Getter
+    @Setter
+    /**
+     * 活动性质
+     */
+    private ActivityNature activityNature;
+
     @OneToOne(mappedBy = "activity",cascade = {CascadeType.MERGE,CascadeType.REMOVE},fetch = FetchType.LAZY)
     @Getter
     @Setter

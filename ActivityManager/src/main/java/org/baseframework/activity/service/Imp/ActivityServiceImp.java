@@ -5,6 +5,7 @@ import org.baseframework.activity.comm.JsonHelper;
 import org.baseframework.activity.comm.Table;
 import org.baseframework.activity.models.Activity;
 import org.baseframework.activity.repository.ActivityRepository;
+import org.baseframework.activity.service.ActivityAttachService;
 import org.baseframework.activity.service.ActivityService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,6 +29,9 @@ public class ActivityServiceImp implements ActivityService {
 
     @Resource
     private ActivityRepository activityRepository;
+
+    @Resource
+    private ActivityAttachService activityAttachService;
 
     @Override
     public Page<Activity> queryLimit(HttpServletRequest request, int page, int limit) {
@@ -71,9 +75,24 @@ public class ActivityServiceImp implements ActivityService {
     }
 
     @Override
-    public String Edit(Activity activity) {
+    public Activity Edit(Activity activity) {
         Activity model = activityRepository.saveAndFlush(activity);
-        return null;
+        if(model==null)
+            return null;
+        return  model;
+    }
+
+    @Override
+    public String Edit(HttpServletRequest request) {
+        Activity activity = new Activity();
+        Activity model = activityRepository.saveAndFlush(activity);
+        if(model==null)
+            return "失败";
+        if(activityAttachService.Edit(model,request)==null){
+            activityRepository.delete(activity);
+            return "失败";
+        }
+        return "成功";
     }
 
     @Override

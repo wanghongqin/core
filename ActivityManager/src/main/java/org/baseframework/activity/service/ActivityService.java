@@ -12,7 +12,9 @@ public interface ActivityService {
 
     Table<Activity> queryLimitStr(HttpServletRequest request, int page, int limit);
 
-    String Edit(Activity activity);
+    Activity Edit(Activity activity);
+
+    String Edit(HttpServletRequest request);
 
     String Delete(Activity activity);
 

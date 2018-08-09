@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+
 @Entity
 @Table(name = "t_activityregistration")
 public class ActivityRegistration extends EntityBase {
@@ -39,7 +40,7 @@ public class ActivityRegistration extends EntityBase {
 
     @Getter
     @Setter
-    @Column(name = "signId",columnDefinition = "default bit 0")
+    @Column(name = "signId",columnDefinition = "bit default 0")
     private boolean signId;
 
     /**
