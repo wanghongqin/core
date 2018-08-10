@@ -13,7 +13,11 @@
 	<!-- 引入组件 -->
 	<script src="https://unpkg.com/vue/dist/vue.min.js"></script>
 	<script src="https://unpkg.com/vant/lib/vant.min.js"></script>
+	<script src="${request.contextPath}/util/dateformat.js"></script>
+	<!-- <script src="../../static/js/vue2-editor.js"></script> -->
 	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<script src="https://cdn.bootcss.com/es6-promise/4.1.1/es6-promise.auto.js"></script>
+	<script src="${request.contextPath}/util/http.js"></script>
 
 	<style type="text/css">
 		.search {
@@ -52,6 +56,118 @@
 			color: rgb(7, 110, 220);
 		}
 
+
+
+		span.state {
+			position: absolute;
+			font-size: 0.7em;
+			top: -2px;
+			background: #ab833f;
+			color: #fff;
+			display: block;
+			padding: 2px 5px;
+			border-radius: 4px;
+		}
+
+		.statebackgroud-greenyellow {
+			background: #009F95 !important;
+		}
+
+		.statebackgroud-green {
+			background: green !important;
+		}
+
+		.statebackgroud-indianred {
+			background: indianred !important;
+		}
+
+		.statebackgroud-end {
+			background: #C24F4A !important;
+		}
+
+		body {
+			background-color: #eee;
+			font-size: 0.95rem;
+		}
+
+		blockquote,
+		body,
+		button,
+		dd,
+		div,
+		dl,
+		dt,
+		form,
+		h1,
+		h2,
+		h3,
+		h4,
+		h5,
+		h6,
+		input,
+		li,
+		ol,
+		p,
+		pre,
+		td,
+		textarea,
+		th,
+		ul {
+			margin: 0;
+			padding: 0;
+			-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+		}
+
+		h4,
+		h5,
+		h6 {
+			font-size: 100%;
+			font-weight: 400;
+		}
+
+		.padding {
+			padding: 15px;
+			background: #fff;
+		}
+
+		.magin-top {
+			margin-top: 10px;
+		}
+
+		.meta-info {
+			color: #ccc;
+			font-size: 12px;
+		}
+
+		.meta-info span {
+			margin-right: 10px;
+		}
+
+		.res-list {
+			margin: 10px 0;
+		}
+
+		.res-list img {
+			width: 100%;
+		}
+
+		.action {
+			position: absolute;
+			right: 0px;
+			top: 0px;
+			width: 40px;
+			height: 40px;
+			line-height: 40px;
+			text-align: center;
+			color: #000;
+			font-weight: bold;
+			font-size: 20px;
+		}
+
+		.action:hover {
+			font-size: 24px;
+		}
+
 		.action-button {
 			text-align: center;
 			padding: 10px;
@@ -73,6 +189,23 @@
 		.action-button span {
 			font-size: 10px;
 		}
+
+		h6 {
+			margin-top: 5px;
+		}
+
+		.activity .summary {
+			padding: 10px 0;
+			font-size: 0.9rem;
+		}
+
+		.replate {
+			position: relative;
+		}
+
+		.disable {
+			display: none;
+		}
 	</style>
 </head>
 
@@ -89,7 +222,32 @@
 		<div class="content">
 			<van-pull-refresh v-model="isLoading" @refresh="onRefresh">
 				<van-list v-model="loading" :finished="finished" @load="onLoad">
-					<van-cell v-for="item in list" :key="item" :title="item + ''" @click="showAction=true" />
+					<div :class="showClass">
+						<div class="activity" v-for="item in list" :key="item">
+							<div class="padding magin-top replate" @click="onShowActions(item)">
+								<div class="action">
+									...
+								</div>
+								<span v-bind:class="stateClass(item)">{{activityState(item)}}</span>
+								<h6>{{item.activityName}}</h6>
+								<div class="summary">
+									<div v-html="item.activityContent">
+									</div>
+								</div>
+								<div class="res-list">
+									<div>
+										<!--<img src="$root.contextPath/wechat/img/community.jpg" />-->
+										<!-- <img v-bind:src="getActityImage(item)" /> -->
+									</div>
+								</div>
+								<div class="meta-info">
+									<span>{{item.startTime}}</span>
+									<span>{{item.activityRegistrations.length}}人参与</span>
+									<span>{{item.activityResources.length}}素材</span>
+								</div>
+							</div>
+						</div>
+					</div>
 				</van-list>
 			</van-pull-refresh>
 		</div>
@@ -115,7 +273,7 @@
 					</div>
 				</van-col>
 				<van-col span="6" v-if="getAuth('uploadResoure')">
-					<div class="action-button" @click="onAction('uploadResoure')"> 
+					<div class="action-button" @click="onAction('uploadResoure')">
 						<i class="van-icon van-icon-photograph"></i>
 						<span>上传素材</span>
 					</div>
@@ -133,7 +291,7 @@
 					</div>
 				</van-col>
 				<van-col span="6" v-if="getAuth('Delete')">
-					<div class="action-button" @click="onAction('Delete')"> 
+					<div class="action-button" @click="onAction('Delete')">
 						<i class="van-icon van-icon-delete"></i>
 						<span>删除活动</span>
 					</div>
@@ -206,40 +364,120 @@
 				list: [],
 				loading: false,
 				finished: false,
-				showAction: false
+				showAction: false,
+				page: 1,
+				selectActivity: '',
+				showClass: 'disable',
+				isAjax:false
 			},
 			created: function () {
 
 			},
 			methods: {
 				onSearch: function () {
-					alert(this.key)
+					this.onRefresh();
 				},
 				onRefresh() {
-					setTimeout(() => {
-						this.$toast('刷新成功');
-						this.isLoading = false;
-						this.count++;
-					}, 500);
+					var context = this;
+					context.page = 1;
+					if(context.isAjax) return;
+					context.finished = false;
+					context.isAjax = true;
+					axios.post("/ActivityApi/queryLimit", {
+						currentPage: context.page,
+						pagesize: 15,
+						activityName: context.key
+					}).then(function (response) {
+						var result = response.data;
+						console.log(result);
+						console.log("onRefresh");
+						context.loading = false;
+						context.isLoading = false;
+						context.isAjax = false;
+						context.list = result.content;
+						if (result.totalPages == context.page || result.totalPages == 0) {
+							context.finished = true;
+						}
+						context.page += 1;
+					});
 				},
 				onLoad() {
-					setTimeout(() => {
-						for (let i = 0; i < 10; i++) {
-							this.list.push(this.list.length + 1);
+					var context = this;
+					if(context.isAjax) return;
+					if (context.finished) return;
+					context.isAjax = true;
+					axios.post("/ActivityApi/queryLimit", {
+						currentPage: context.page,
+						pagesize: 15,
+						activityName: context.key
+					}).then(function (response) {
+						var result = response.data;
+						console.log(result);
+						console.log("onLoad");
+						context.loading = false;
+						context.isAjax = false;
+						context.list = context.list.concat(result.content);
+						if (result.totalPages == context.page || result.totalPages == 0) {
+							context.finished = true;
 						}
-						this.loading = false;
-
-						if (this.list.length >= 40) {
-							this.finished = true;
-						}
-					}, 500);
+						context.showClass = '';
+						context.page += 1;
+					});
 				},
 				addActivity: function () {
-					this.$toast('添加活动');
+					window.location.href = "${request.contextPath}/MobileActivity/Edit/0"
 				},
 				getAuth: function (v) {
 					return true;
-				}
+				},
+				stateClass: function (activity) {
+					var context = this;
+					if (new Date() < new Date(activity.startTime.replace(/-/g, "/")) && activity.activityType != "enroll") {
+						return "state";
+					}
+					if (new Date() >= new Date(activity.startTime.replace(/-/g, "/")) && activity.activityState == "open") {
+						return "state statebackgroud-green";
+					}
+					if (new Date() >= new Date(activity.startTime.replace(/-/g, "/")) && activity.activityState == "close") {
+						return "state statebackgroud-indianred";
+					}
+					// 					if (new Date() < new Date(activity.startTime.replace(/-/g, "/")) && activity.type == "enroll" && activity.participants
+					// 						.length < activity.attendNumber) {
+					// 						return "state statebackgroud-greenyellow";
+					// 					}
+					// 					if (new Date() < new Date(activity.startTime.replace(/-/g, "/")) && activity.type == "enroll" && activity.participants
+					// 						.length >= activity.attendNumber) {
+					// 						return "state statebackgroud-end";
+					// 					}
+				},
+				activityState: function (activity) {
+					var context = this;
+					if (new Date() < new Date(activity.startTime.replace(/-/g, "/")) && activity.activityType != "enroll") {
+						context.state = "state";
+						return "未开始";
+					}
+					if (new Date() >= new Date(activity.startTime.replace(/-/g, "/")) && activity.activityState == "open") {
+						context.state = "state statebackgroud-green";
+						return "进行中";
+					}
+					if (new Date() >= new Date(activity.startTime.replace(/-/g, "/")) && activity.activityState == "close") {
+						return "已结束";
+					}
+					// 					if (new Date() < new Date(activity.startTime.replace(/-/g, "/")) && activity.type == "enroll" && activity.participants
+					// 						.length < activity.attendNumber) {
+					// 						context.state = "state statebackgroud-greenyellow";
+					// 						return "报名中";
+					// 					}
+					// 					if (new Date() < new Date(activity.startTime.replace(/-/g, "/")) && activity.type == "enroll" && activity.participants
+					// 						.length >= activity.attendNumber) {
+					// 						return "报名结束";
+					// 					}
+				},
+				onShowActions: function (activity) {
+					var context = this;
+					context.showAction = true;
+					context.selectActivity = activity;
+				},
 			},
 		})
 	</script>

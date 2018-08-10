@@ -2,10 +2,10 @@ package org.baseframework.activity.service.Imp;
 
 import org.apache.commons.lang3.StringUtils;
 import org.baseframework.activity.comm.JsonHelper;
+import org.baseframework.activity.comm.OperationResult;
 import org.baseframework.activity.comm.Table;
 import org.baseframework.activity.models.Activity;
 import org.baseframework.activity.repository.ActivityRepository;
-import org.baseframework.activity.service.ActivityAttachService;
 import org.baseframework.activity.service.ActivityService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,8 +30,6 @@ public class ActivityServiceImp implements ActivityService {
     @Resource
     private ActivityRepository activityRepository;
 
-    @Resource
-    private ActivityAttachService activityAttachService;
 
     @Override
     public Page<Activity> queryLimit(HttpServletRequest request, int page, int limit) {
@@ -75,23 +73,19 @@ public class ActivityServiceImp implements ActivityService {
     }
 
     @Override
-    public Activity Edit(Activity activity) {
+    public OperationResult Edit(Activity activity) {
         Activity model = activityRepository.saveAndFlush(activity);
-        if(model==null)
-            return null;
-        return  model;
+        if (model == null)
+            return new OperationResult(false, "编辑失败");
+        return new OperationResult(true, "编辑成功",model.getId());
     }
 
     @Override
     public String Edit(HttpServletRequest request) {
         Activity activity = new Activity();
         Activity model = activityRepository.saveAndFlush(activity);
-        if(model==null)
+        if (model == null)
             return "失败";
-        if(activityAttachService.Edit(model,request)==null){
-            activityRepository.delete(activity);
-            return "失败";
-        }
         return "成功";
     }
 
@@ -109,7 +103,6 @@ public class ActivityServiceImp implements ActivityService {
 
     @Override
     public String findStrById(long Id) {
-
         return JsonHelper.objectToStr(this.findById(Id));
     }
 

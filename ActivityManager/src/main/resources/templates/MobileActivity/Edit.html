@@ -8,20 +8,23 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	<title>活动编辑</title>
 	<!-- 引入样式 -->
-	<link rel="stylesheet" href="https://unpkg.com/vant/lib/vant-css/index.css">
-
+	<link rel="stylesheet" href="https://unpkg.com/vant/lib/vant-css/index.css"> 
 	<!-- 引入组件 -->
 	<script src="https://unpkg.com/vue/dist/vue.min.js"></script>
 	<script src="https://unpkg.com/vant/lib/vant.min.js"></script>
-	<script src="../../static/js/vue2-editor.js"></script>
+	<script src="${request.contextPath}/js/vue2-editor.js"></script>
+	<script src="${request.contextPath}/util/dateformat.js"></script>
+	<!-- <script src="../../static/js/vue2-editor.js"></script> -->
 	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-
+	<script src="https://cdn.bootcss.com/es6-promise/4.1.1/es6-promise.auto.js"></script>
+	<script src="${request.contextPath}/util/http.js"></script>
 	<style type="text/css">
-		#app{
+		#app {
 			position: absolute;
 			width: 100%;
 			height: 100%;
 		}
+
 		.content {
 			padding: 15px 20px;
 			margin-top: 51px;
@@ -55,6 +58,7 @@
 			min-height: auto !important;
 			height: 100px !important;
 			padding: 0px !important;
+			font-size: 0.9rem !important;
 		}
 
 		.ql-toolbar.ql-snow+.ql-container.ql-snow {
@@ -86,7 +90,8 @@
 			width: 90%;
 			padding: 0px 5%;
 		}
-		.disable{
+
+		.disable {
 			display: none;
 		}
 	</style>
@@ -122,12 +127,13 @@
 						<van-field v-model="activitytype" label="活动类型" placeholder="请选择活动类型" readonly required @click="activitytypeshow=true" />
 						<van-field v-model="activitydata.activityType" type="hidden" />
 					</van-cell-group>
-					
+
 					<van-cell-group class="cell">
-						<van-field v-model="activitynature" label="活动性质" placeholder="请选择活动性质" readonly required @click="activitynatureshow=true" />
-						<van-field v-model="activitydata.activityNature" type="hidden" />
+						<van-field v-model="activitynature" label="活动性质" placeholder="请选择活动性质" readonly required @click="activitynatureshow=true"
+						/>
+						<van-field v-model="activitydata.activityNature.Id" type="hidden" />
 					</van-cell-group>
-					
+
 					<van-cell-group class="cell">
 						<van-field v-model="liability" label="负责人" placeholder="请选择负责人" readonly required @click="liabilityIdshow=true" />
 						<van-field v-model="activitydata.liabilityId" type="hidden" />
@@ -149,7 +155,7 @@
 							</div>
 						</div>
 					</van-cell-group>
-					<van-button type="default" bottom-action @click="submitdata">提交</van-button>
+					<van-button type="default" bottom-action @click="next">提交</van-button>
 				</van-tab>
 				<van-tab>
 
@@ -172,7 +178,7 @@
 						<van-field v-model="activityAttach.enableImagePoint" label="使用资源积分" readonly placeholder="请输入使用资源积分" required @click="setenableImagePointValue();"
 						/>
 					</van-cell-group>
-
+					<van-button type="default" bottom-action @click="submitdata">提交</van-button>
 				</van-tab>
 			</van-tabs>
 			<van-popup v-model="activitytypeshow" position="bottom">
@@ -183,17 +189,18 @@
 				<van-picker title="负责人" :columns="liabilitycolumns" show-toolbar @confirm="setLiability" @cancel="liabilityIdshow=false"
 				/>
 			</van-popup>
-			
+
 			<van-popup v-model="activitynatureshow" position="bottom">
-				<van-picker title="活动性质" :columns="activitynaturecolumns" show-toolbar @confirm="setLiability" @cancel="activitynatureshow=false"
+				<van-picker title="活动性质" :columns="activitynaturecolumns" show-toolbar @confirm="setActivityNature" @cancel="activitynatureshow=false"
 				/>
 			</van-popup>
 
 			<van-popup v-model="timeshow" position="bottom">
 				<van-datetime-picker v-model="Time" title="年-月-日-时-分" type="datetime" @confirm="setStartTime" @cancel="timeshow=false" />
 			</van-popup>
-			
-			<van-number-keyboard :show="show" theme="custom" extra-key="" :type="type" close-button-text="完成" @blur="show=false"  @input="onInput" @delete="onDelete" />
+
+			<van-number-keyboard :show="show" theme="custom" extra-key="" :type="type" close-button-text="完成" @blur="show=false" @input="onInput"
+			    @delete="onDelete" />
 		</div>
 
 	</div>
@@ -206,37 +213,41 @@
 				timeshow: false,
 				liabilityIdshow: false,
 				activitytypeshow: false,
-				activitynatureshow:false,
+				activitynatureshow: false,
 				show: false,
 				liability: "",
 				activitytype: "",
-				activitynature:'',
+				activitynature: '',
 				Time: "",
 				type: '',
 				liabilitycolumns: [],
 				activitytypecolumns: [],
-				activitynaturecolumns:[],
+				activitynaturecolumns: [],
 				className: "disable",
 				classPoint: 'disable',
 				activitydata: {
-					Id: "",
-					activityName: "", 
-					addTime: "", 
-					createId: "", 
-					state: "",
-					startTime: "",
-					liabilityId: "",
-					activityType: "",
-					activityContent: "",
-					remark: "", 
-					activityNature:'',
-					
+					Id: "${activity.getId()}",
+					activityName: "${activity.getActivityName()}",
+					addTime: "${activity.getAddTime()}",
+					createId: "${activity.getCreateId()}",
+					activityState: "${activity.getActivityState()}",
+					startTime: "${activity.getStartTime()}",
+					liabilityId: "${activity.getLiabilityId()}",
+					activityType: "${activity.getActivityType()}",
+					activityContent: "${activity.getActivityContent()}",
+					remark: "${activity.getRemark()}",
+					activityNature: {
+						Id: '${activity.getActivityNature().getId()}'
+					},
 				},
-				activityAttach:{
+				activityAttach: {
 					attendNumber: "",
 					signIdPoint: "",
 					imagePoint: "",
-					enableImagePoint: ""
+					enableImagePoint: "",
+					activity: {
+						Id: ''
+					}
 				}
 			},
 			mounted: function () {
@@ -258,14 +269,39 @@
 					values: values,
 					defaultIndex: 0
 				});
+				this.liabilitycolumns.push({
+					values: [{
+						id: 1,
+						text: 'test'
+					}],
+					defaultIndex: 0
+				});
+				this.GetActivityNatures();
 			},
 			methods: {
-				submitdata: function () {
-					axios.post("",);
-					this.active++;
+				next: function () {
+					var context = this;
+					axios.post("/ActivityApi/Edit", this.activitydata).then(function (response) {
+						var result = response.data;
+						console.log(result);
+						if (result.resultType) {
+							context.activityAttach.activity.Id = result.appendData
+							context.active++;
+						} else {
+							context.$toast.fail(result.message);
+						}
+					})
 				},
-				hides:function(){
-					this.show = false;
+				submitdata: function () {
+					axios.post("/ActivityAttachApi/Edit", this.activityAttach).then(function (response) {
+						var result = response.data;
+						console.log(result);
+						if (result.resultType) {
+							window.location.href = "${request.contextPath}/MobileActivity/Index"
+						} else {
+							context.$toast.fail(result.message);
+						}
+					})
 				},
 				setStartTime: function (value) {
 					var context = this;
@@ -280,7 +316,7 @@
 				},
 				setActivitytype: function (value) {
 					var context = this;
-					context.activitydata.type = value[0].type;
+					context.activitydata.activityType = value[0].type;
 					context.activitytype = value[0].text;
 					context.activitytypeshow = false;
 					if (value[0].type == "enroll") {
@@ -290,6 +326,12 @@
 						context.className = "disable";
 						context.classPoint = "disable";
 					}
+				},
+				setActivityNature: function (value) {
+					var context = this;
+					context.activitydata.activityNature.Id = value[0].id;
+					context.activitynature = value[0].text;
+					context.activitynatureshow = false;
 				},
 				setAttendValue: function () {
 					this.show = true;
@@ -386,6 +428,35 @@
 							break;
 
 					}
+				},
+				GetActivityNatures: function () {
+					var context = this;
+					axios.post("/ActivityNatureApi/queryActivityNature").then(function (response) {
+						var data = response.data;
+						console.log(response.data);
+						var values = [];
+						for (var i = 0; i < data.length; i++) {
+							var d = data[i];
+							values.push({
+								id: d.id,
+								text: d.activityNature
+							});
+						}
+						var index = 0;
+						for (var i = 0; i < data.length; i++) {
+							var d = data[i];
+							if (context.activitydata.Id != 0) {
+								if (context.activitydata.activityNature.Id == d.id) {
+									index = i;
+									context.activitynature = d.activityNature;
+								}
+							}
+						}
+						context.activitynaturecolumns.push({
+							values: values,
+							defaultIndex: index
+						});
+					});
 				},
 			},
 		})
