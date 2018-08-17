@@ -5,6 +5,7 @@ import org.baseframework.activity.comm.JsonHelper;
 import org.baseframework.activity.comm.OperationResult;
 import org.baseframework.activity.comm.Table;
 import org.baseframework.activity.models.Activity;
+import org.baseframework.activity.models.extend.EActivityState;
 import org.baseframework.activity.repository.ActivityRepository;
 import org.baseframework.activity.service.ActivityService;
 import org.springframework.data.domain.Page;
@@ -77,7 +78,7 @@ public class ActivityServiceImp implements ActivityService {
         Activity model = activityRepository.saveAndFlush(activity);
         if (model == null)
             return new OperationResult(false, "编辑失败");
-        return new OperationResult(true, "编辑成功",model.getId());
+        return new OperationResult(true, "编辑成功", model.getId());
     }
 
     @Override
@@ -96,9 +97,13 @@ public class ActivityServiceImp implements ActivityService {
     }
 
     @Override
-    public String Delete(long Id) {
-        activityRepository.deleteById(Id);
-        return null;
+    public OperationResult Delete(long Id) {
+        try {
+            activityRepository.deleteById(Id);
+            return new OperationResult(true, "删除成功");
+        } catch (Exception ex) {
+            return new OperationResult(false, "删除出错，请检查");
+        }
     }
 
     @Override
@@ -109,5 +114,27 @@ public class ActivityServiceImp implements ActivityService {
     @Override
     public Activity findById(long Id) {
         return activityRepository.getOne(Id);
+    }
+
+    @Override
+    public OperationResult Close(long Id) {
+        Activity activity = activityRepository.getOne(Id);
+        if (activity == null)
+            return new OperationResult(false, "活动不存在");
+        activity.setActivityState(EActivityState.close);
+        if (activityRepository.saveAndFlush(activity) == null)
+            return new OperationResult(false, "活动关闭失败");
+        return new OperationResult(true, "活动关闭成功");
+    }
+
+    @Override
+    public OperationResult Open(long Id) {
+        Activity activity = activityRepository.getOne(Id);
+        if (activity == null)
+            return new OperationResult(false, "活动不存在");
+        activity.setActivityState(EActivityState.open);
+        if (activityRepository.saveAndFlush(activity) == null)
+            return new OperationResult(false, "活动开启失败");
+        return new OperationResult(true, "活动开启成功");
     }
 }

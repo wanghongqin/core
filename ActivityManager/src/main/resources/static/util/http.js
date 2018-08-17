@@ -8,9 +8,9 @@
  axios.interceptors.request.use(
  	function (config) {
  		//在请求发出之前进行一些操作
- 		const token = sessionStorage.getItem("token"); //获取存储在本地的token
- 		let data = config.data;
- 		let params = new URLSearchParams()
+ 		var token = sessionStorage.getItem("token"); //获取存储在本地的token
+ 		var data = config.data;
+ 		var params = new URLSearchParams()
  		for (var key in config.data) {
  			if (typeof (data[key]) == "object" &&
  				Object.prototype.toString.call(data[key]).toLowerCase() == "[object object]" && !data[key].length) {

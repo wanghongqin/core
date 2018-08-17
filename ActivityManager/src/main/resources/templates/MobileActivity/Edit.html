@@ -8,7 +8,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	<title>活动编辑</title>
 	<!-- 引入样式 -->
-	<link rel="stylesheet" href="https://unpkg.com/vant/lib/vant-css/index.css"> 
+	<link rel="stylesheet" href="https://unpkg.com/vant/lib/vant-css/index.css">
 	<!-- 引入组件 -->
 	<script src="https://unpkg.com/vue/dist/vue.min.js"></script>
 	<script src="https://unpkg.com/vant/lib/vant.min.js"></script>
@@ -21,8 +21,8 @@
 	<style type="text/css">
 		#app {
 			position: absolute;
-			width: 100%;
-			height: 100%;
+			width: 100%; 
+			background: #fff;
 		}
 
 		.content {
@@ -94,6 +94,10 @@
 		.disable {
 			display: none;
 		}
+
+		.van-toast--default {
+			width: auto !important;
+		}
 	</style>
 </head>
 
@@ -106,10 +110,10 @@
 			</van-steps>
 		</div>
 		<div class="content">
-			<van-tabs v-model="active" swipeable>
+			<van-tabs v-model="active">
 				<van-tab>
 					<van-cell-group>
-						<van-field v-model="activitydata.activityName" required label="活动名称" placeholder="请输入活动名称" />
+						<van-field v-model="activity.data.activityName" required label="活动名称" placeholder="请输入活动名称" />
 					</van-cell-group>
 					<van-cell-group class="cell">
 						<div class="van-cell van-cell--required van-hairline van-field">
@@ -118,29 +122,30 @@
 							</div>
 							<div class="van-cell__value">
 								<div class="van-field__body">
-									<vue-editor v-model="activitydata.activityContent" placeholder="请输入活动内容"></vue-editor>
+									<vue-editor v-model="activity.data.activityContent" placeholder="请输入活动内容"></vue-editor>
 								</div>
 							</div>
 						</div>
 					</van-cell-group>
 					<van-cell-group class="cell">
 						<van-field v-model="activitytype" label="活动类型" placeholder="请选择活动类型" readonly required @click="activitytypeshow=true" />
-						<van-field v-model="activitydata.activityType" type="hidden" />
+						<van-field v-model="activity.data.activityType" type="hidden" />
 					</van-cell-group>
 
 					<van-cell-group class="cell">
 						<van-field v-model="activitynature" label="活动性质" placeholder="请选择活动性质" readonly required @click="activitynatureshow=true"
 						/>
-						<van-field v-model="activitydata.activityNature.Id" type="hidden" />
+						<van-field v-model="activity.data.activityNature.Id" type="hidden" />
 					</van-cell-group>
 
 					<van-cell-group class="cell">
 						<van-field v-model="liability" label="负责人" placeholder="请选择负责人" readonly required @click="liabilityIdshow=true" />
-						<van-field v-model="activitydata.liabilityId" type="hidden" />
+						<van-field v-model="activity.data.liabilityId" type="hidden" />
 					</van-cell-group>
 
 					<van-cell-group class="cell">
-						<van-field v-model="activitydata.startTime" label="开始时间" placeholder="请选择开始时间" readonly required @click="timeshow=true" />
+						<van-field v-model="activity.data.startTime" label="开始时间" placeholder="请选择开始时间" readonly required @click="timeshow=true"
+						/>
 					</van-cell-group>
 
 					<van-cell-group class="cell">
@@ -150,7 +155,7 @@
 							</div>
 							<div class="van-cell__value">
 								<div class="van-field__body">
-									<vue-editor v-model="activitydata.remark" placeholder="请输入描述"></vue-editor>
+									<vue-editor v-model="activity.data.remark" placeholder="请输入描述"></vue-editor>
 								</div>
 							</div>
 						</div>
@@ -160,22 +165,27 @@
 				<van-tab>
 
 					<van-cell-group :class="className">
-						<van-field v-model="activityAttach.attendNumber" label="参与人数" readonly placeholder="请输入参与人数" required @click="setAttendValue();"
+						<van-field v-model="activityAttach.data.attendNumber" label="参与人数" readonly placeholder="请输入参与人数" required @click="setAttendValue"
+						/>
+					</van-cell-group>
+
+					<van-cell-group :class="classPoint" ref="enrollPoint">
+						<van-field v-model="activityAttach.data.enrollPoint" label="报名积分" readonly placeholder="请输入报名积分" required @click="setenrollPointValue"
 						/>
 					</van-cell-group>
 
 					<van-cell-group :class="classPoint" ref="signIdPoint">
-						<van-field v-model="activityAttach.signIdPoint" label="签到积分" readonly placeholder="请输入签到积分" required @click="setsignIdPointValue();"
+						<van-field v-model="activityAttach.data.signIdPoint" label="签到积分" readonly placeholder="请输入签到积分" required @click="setsignIdPointValue"
 						/>
 					</van-cell-group>
 
 					<van-cell-group class="cell">
-						<van-field v-model="activityAttach.imagePoint" label="上传资源积分" readonly placeholder="请输入上传资源积分" required @click="setimagePointValue();"
+						<van-field v-model="activityAttach.data.imagePoint" label="上传资源积分" readonly placeholder="请输入上传资源积分" required @click="setimagePointValue"
 						/>
 					</van-cell-group>
 
 					<van-cell-group class="cell">
-						<van-field v-model="activityAttach.enableImagePoint" label="使用资源积分" readonly placeholder="请输入使用资源积分" required @click="setenableImagePointValue();"
+						<van-field v-model="activityAttach.data.enableImagePoint" label="使用资源积分" readonly placeholder="请输入使用资源积分" required @click="setenableImagePointValue"
 						/>
 					</van-cell-group>
 					<van-button type="default" bottom-action @click="submitdata">提交</van-button>
@@ -225,33 +235,93 @@
 				activitynaturecolumns: [],
 				className: "disable",
 				classPoint: 'disable',
-				activitydata: {
-					Id: "${activity.getId()}",
-					activityName: "${activity.getActivityName()}",
-					addTime: "${activity.getAddTime()}",
-					createId: "${activity.getCreateId()}",
-					activityState: "${activity.getActivityState()}",
-					startTime: "${activity.getStartTime()}",
-					liabilityId: "${activity.getLiabilityId()}",
-					activityType: "${activity.getActivityType()}",
-					activityContent: "${activity.getActivityContent()}",
-					remark: "${activity.getRemark()}",
-					activityNature: {
-						Id: '${activity.getActivityNature().getId()}'
+				activity: {
+					rules: {
+						activityName: {
+							required: true,
+							message: "请输入活动名称"
+						},
+						activityContent: {
+							required: true,
+							message: "请输入活动内容"
+						},
+						activityType: {
+							required: true,
+							message: "请选择活动类型"
+						},
+						activityNature: {
+							Id: {
+								required: true,
+								message: "请选择活动性质"
+							}
+						},
+						liabilityId: {
+							required: true,
+							message: "请选择活动负责人"
+						},
+						startTime: {
+							required: true,
+							message: "请选择开始时间"
+						},
 					},
+					data: {
+						Id: "${activity.getId()}",
+						activityName: "${activity.getActivityName()}",
+						addTime: "${activity.getAddTime()}",
+						createId: "${activity.getCreateId()}",
+						activityState: "${activity.getActivityState()}",
+						startTime: "",
+						liabilityId: "",
+						activityType: "",
+						activityContent: '${activity.getActivityContent()}',
+						remark: '${activity.getRemark()}',
+						activityNature: {
+							Id: ''
+						},
+					}
 				},
 				activityAttach: {
-					attendNumber: "",
-					signIdPoint: "",
-					imagePoint: "",
-					enableImagePoint: "",
-					activity: {
-						Id: ''
+					rules: {
+						attendNumber: {
+							required: true,
+							message: "请输入参与人数"
+						},
+						enrollPoint: {
+							required: true,
+							message: "请输入报名积分"
+						},
+						signIdPoint: {
+							required: true,
+							message: "请输入签到积分"
+						},
+						imagePoint: {
+							required: true,
+							message: "请输入上传资源积分"
+						},
+						enableImagePoint: {
+							required: true,
+							message: "请输入使用资源积分"
+						},
+						activity: {
+							Id: {
+								required: true,
+								message: "没有找到相应活动"
+							}
+						}
+					},
+					data: {
+						attendNumber: "${attach.getAttendNumber()}",
+						signIdPoint: "${attach.getSignIdPoint()}",
+						imagePoint: "${attach.getImagePoint()}",
+						enableImagePoint: "${attach.getEnableImagePoint()}",
+						enrollPoint: "${attach.getEnrollPoint()}",
+						activity: {
+							Id: "${attach.getActivity().getId()}"
+						}
 					}
 				}
 			},
 			mounted: function () {
-
 				var values = [];
 				values.push({
 					type: 'enroll',
@@ -277,46 +347,98 @@
 					defaultIndex: 0
 				});
 				this.GetActivityNatures();
+
+				var context = this;
+				var time = "${activity.getStartTime()}";
+				time = time.substring(0, time.lastIndexOf(".")).replace(/-/g, "/");
+				if (!isNaN(new Date(time))) {
+					var value = new Date(time);
+					context.activity.data.startTime = value.format("yyyy-MM-dd hh:mm:ss");
+					context.Time = value;
+				} else {
+					context.Time = new Date();
+				}
 			},
 			methods: {
 				next: function () {
 					var context = this;
-					axios.post("/ActivityApi/Edit", this.activitydata).then(function (response) {
-						var result = response.data;
-						console.log(result);
-						if (result.resultType) {
-							context.activityAttach.activity.Id = result.appendData
-							context.active++;
-						} else {
-							context.$toast.fail(result.message);
+					this.validate(this.activity, function (value) {
+						if (value) {
+							axios.post("/ActivityApi/Edit", context.activity.data).then(function (response) {
+								var result = response.data;
+								console.log(result);
+								if (result.resultType) {
+									context.activityAttach.data.activity.Id = result.appendData
+									context.active++;
+								} else {
+									context.$toast.fail(result.message);
+								}
+							});
 						}
-					})
+					});
 				},
 				submitdata: function () {
-					axios.post("/ActivityAttachApi/Edit", this.activityAttach).then(function (response) {
-						var result = response.data;
-						console.log(result);
-						if (result.resultType) {
-							window.location.href = "${request.contextPath}/MobileActivity/Index"
-						} else {
-							context.$toast.fail(result.message);
+					var context = this;
+					this.validate(this.activityAttach, function (value) {
+						if (value) {
+							axios.post("/ActivityAttachApi/Edit", context.activityAttach.data).then(function (response) {
+								var result = response.data;
+								console.log(result);
+								if (result.resultType) {
+									window.location.href = "${request.contextPath}/MobileActivity/Index"
+								} else {
+									context.$toast.fail(result.message);
+								}
+							})
 						}
-					})
+					});
+				},
+				validate: function (data, callback) {
+					var context = this;
+					var rules = data["rules"];
+					var values = data["data"];
+					var result = true;
+					for (var key in rules) {
+						console.log(rules[key]);
+						if (!result) break;
+						if (rules[key].required == undefined && Object.prototype.toString.call(rules[key]).toLowerCase() ==
+							"[object object]" && !rules[key].length) {
+							for (var k in rules[key]) {
+								if (rules[key][k].required) {
+									if (values[key][k].length == 0 || values[key][k] == "") {
+										context.$toast.fail(rules[key][k].message);
+										result = false;
+										break;
+									}
+								}
+							}
+						} else {
+							if (rules[key].required) {
+								if (values[key].length == 0 || values[key] == "") {
+									context.$toast.fail(rules[key].message);
+									result = false;
+									break;
+								}
+							}
+						}
+
+					}
+					callback(result);
 				},
 				setStartTime: function (value) {
 					var context = this;
-					context.activitydata.startTime = value.format("yyyy-MM-dd hh:mm:ss")
+					context.activity.data.startTime = value.format("yyyy-MM-dd hh:mm:ss")
 					context.timeshow = false;
 				},
 				setLiability: function (value) {
 					var context = this;
-					context.activitydata.liabilityId = value[0].id;
+					context.activity.data.liabilityId = value[0].id;
 					context.liability = value[0].text;
 					context.liabilityIdshow = false;
 				},
 				setActivitytype: function (value) {
 					var context = this;
-					context.activitydata.activityType = value[0].type;
+					context.activity.data.activityType = value[0].type;
 					context.activitytype = value[0].text;
 					context.activitytypeshow = false;
 					if (value[0].type == "enroll") {
@@ -329,7 +451,7 @@
 				},
 				setActivityNature: function (value) {
 					var context = this;
-					context.activitydata.activityNature.Id = value[0].id;
+					context.activity.data.activityNature.Id = value[0].id;
 					context.activitynature = value[0].text;
 					context.activitynatureshow = false;
 				},
@@ -349,36 +471,47 @@
 					this.show = true;
 					this.type = "enableImagePoint";
 				},
+				setenrollPointValue: function () {
+					this.show = true;
+					this.type = "enrollPoint";
+				},
 				onInput: function (value) {
 					var context = this;
 					switch (this.type) {
 						case "attendNumber":
-							var attendNumber = context.activityAttach.attendNumber;
+							var attendNumber = context.activityAttach.data.attendNumber;
 							if (attendNumber == 0) {
 								attendNumber = "";
 							}
-							context.activityAttach.attendNumber = attendNumber + "" + value;
+							context.activityAttach.data.attendNumber = attendNumber + "" + value;
 							break;
 						case "signIdPoint":
-							var signIdPoint = context.activityAttach.signIdPoint;
+							var signIdPoint = context.activityAttach.data.signIdPoint;
 							if (signIdPoint == 0) {
 								signIdPoint = "";
 							}
-							context.activityAttach.signIdPoint = signIdPoint + "" + value;
+							context.activityAttach.data.signIdPoint = signIdPoint + "" + value;
 							break;
 						case "imagePoint":
-							var imagePoint = context.activityAttach.imagePoint;
+							var imagePoint = context.activityAttach.data.imagePoint;
 							if (imagePoint == 0) {
 								imagePoint = "";
 							}
-							context.activityAttach.imagePoint = imagePoint + "" + value;
+							context.activityAttach.data.imagePoint = imagePoint + "" + value;
 							break;
 						case "enableImagePoint":
-							var enableImagePoint = context.activityAttach.enableImagePoint;
+							var enableImagePoint = context.activityAttach.data.enableImagePoint;
 							if (enableImagePoint == 0) {
 								enableImagePoint = "";
 							}
-							context.activityAttach.enableImagePoint = enableImagePoint + "" + value;
+							context.activityAttach.data.enableImagePoint = enableImagePoint + "" + value;
+							break;
+						case "enrollPoint":
+							var enrollPoint = context.activityAttach.data.enrollPoint;
+							if (enrollPoint == 0) {
+								enrollPoint = "";
+							}
+							context.activityAttach.data.enrollPoint = enrollPoint + "" + value;
 							break;
 						default:
 							break;
@@ -389,40 +522,49 @@
 					var context = this;
 					switch (this.type) {
 						case "attendNumber":
-							var attendNumber = context.activityAttach.attendNumber;
+							var attendNumber = context.activityAttach.data.attendNumber;
 							if (attendNumber.length > 1) {
 								attendNumber = attendNumber.substring(0, attendNumber.length - 1)
 							} else {
 								attendNumber = 0;
 							}
-							context.activityAttach.attendNumber = attendNumber;
+							context.activityAttach.data.attendNumber = attendNumber;
 							break;
 						case "signIdPoint":
-							var signIdPoint = context.activityAttach.signIdPoint;
+							var signIdPoint = context.activityAttach.data.signIdPoint;
 							if (signIdPoint.length > 1) {
 								signIdPoint = signIdPoint.substring(0, signIdPoint.length - 1)
 							} else {
 								signIdPoint = 0;
 							}
-							context.activityAttach.signIdPoint = signIdPoint;
+							context.activityAttach.data.signIdPoint = signIdPoint;
 							break;
 						case "imagePoint":
-							var imagePoint = context.activityAttach.imagePoint;
+							var imagePoint = context.activityAttach.data.imagePoint;
 							if (imagePoint.length > 1) {
 								imagePoint = imagePoint.substring(0, imagePoint.length - 1)
 							} else {
 								imagePoint = 0;
 							}
-							context.activityAttach.imagePoint = imagePoint;
+							context.activityAttach.data.imagePoint = imagePoint;
 							break;
 						case "enableImagePoint":
-							var enableImagePoint = context.activityAttach.enableImagePoint;
+							var enableImagePoint = context.activityAttach.data.enableImagePoint;
 							if (enableImagePoint.length > 1) {
 								enableImagePoint = enableImagePoint.substring(0, enableImagePoint.length - 1)
 							} else {
 								enableImagePoint = 0;
 							}
-							context.activityAttach.enableImagePoint = enableImagePoint;
+							context.activityAttach.data.enableImagePoint = enableImagePoint;
+							break;
+						case "enrollPoint":
+							var enrollPoint = context.activityAttach.data.enrollPoint;
+							if (enrollPoint.length > 1) {
+								enrollPoint = enrollPoint.substring(0, enrollPoint.length - 1)
+							} else {
+								enrollPoint = 0;
+							}
+							context.activityAttach.data.enrollPoint = enrollPoint;
 							break;
 						default:
 							break;
@@ -445,8 +587,8 @@
 						var index = 0;
 						for (var i = 0; i < data.length; i++) {
 							var d = data[i];
-							if (context.activitydata.Id != 0) {
-								if (context.activitydata.activityNature.Id == d.id) {
+							if (context.activity.data.Id != 0) {
+								if (context.activity.data.activityNature.Id == d.id) {
 									index = i;
 									context.activitynature = d.activityNature;
 								}

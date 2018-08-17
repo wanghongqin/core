@@ -1,5 +1,6 @@
 package org.baseframework.activity.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -56,5 +57,6 @@ public class ActivityRegistration extends EntityBase {
     @Setter
     @ManyToOne
     @JoinColumn(name = "activityId")
+    @JsonIgnore
     private Activity activity;
 }

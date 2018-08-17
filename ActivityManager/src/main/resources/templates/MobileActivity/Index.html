@@ -28,7 +28,7 @@
 		}
 
 		.van-search .van-cell {
-			padding: 5px 10px 5px 35px;
+			padding: 5px 10px 5px 15px;
 		}
 
 		.value {
@@ -48,6 +48,8 @@
 			position: fixed;
 			bottom: 25px;
 			right: 25px;
+			background: #fff; 
+            border-radius: 50%; 
 		}
 
 		.addicon {
@@ -171,7 +173,6 @@
 		.action-button {
 			text-align: center;
 			padding: 10px;
-			height: 65px;
 			overflow: hidden;
 		}
 
@@ -182,12 +183,12 @@
 		.action-button i {
 			display: block;
 			font-size: 28px;
-			margin-bottom: 10px;
+			margin: 5px 0px;
 			color: #333;
 		}
 
 		.action-button span {
-			font-size: 10px;
+			font-size: 0.5rem;
 		}
 
 		h6 {
@@ -205,7 +206,7 @@
 
 		.disable {
 			display: none;
-		}
+		} 
 	</style>
 </head>
 
@@ -222,7 +223,7 @@
 		<div class="content">
 			<van-pull-refresh v-model="isLoading" @refresh="onRefresh">
 				<van-list v-model="loading" :finished="finished" @load="onLoad">
-					<div :class="showClass">
+					<div id="loading" class="disable">
 						<div class="activity" v-for="item in list" :key="item">
 							<div class="padding magin-top replate" @click="onShowActions(item)">
 								<div class="action">
@@ -255,6 +256,7 @@
 		<div class="addaction">
 			<van-icon class="addicon" name="add" @click="addActivity" />
 		</div>
+		<div id="action" class="disable">
 		<van-popup v-model="showAction" position="bottom">
 			<van-row>
 				<van-col span="6" v-if="getAuth('enroll')">
@@ -263,9 +265,6 @@
 						<span>报名</span>
 					</div>
 				</van-col>
-				<!--<van-col span="6" v-if="getAuth('noenroll')">
-						<div class="action-button" @click="onAction('noenroll')"><i class="fa fa-upload"></i><span>取消报名</span></div>
-					</van-col>-->
 				<van-col span="6" v-if="getAuth('Edit')">
 					<div class="action-button" @click="onAction('Edit')">
 						<i class="van-icon van-icon-edit"></i>
@@ -290,26 +289,21 @@
 						<span>查看资源</span>
 					</div>
 				</van-col>
-				<van-col span="6" v-if="getAuth('Delete')">
-					<div class="action-button" @click="onAction('Delete')">
-						<i class="van-icon van-icon-delete"></i>
-						<span>删除活动</span>
-					</div>
-				</van-col>
+
 				<van-col span="6" v-if="getAuth('addResoure')">
 					<div class="action-button" @click="onAction('addResoure')">
 						<i class="van-icon van-icon-certificate"></i>
 						<span>审核资源</span>
 					</div>
 				</van-col>
-				<van-col span="6" v-if="getAuth('addPart')">
-					<div class="action-button" @click="onAction('addPart')">
+				<van-col span="6" v-if="getAuth('addRegistration')">
+					<div class="action-button" @click="onAction('addRegistration')">
 						<i class="van-icon van-icon-add-o"></i>
 						<span>添加参与人</span>
 					</div>
 				</van-col>
-				<van-col span="6" v-if="getAuth('lookPart')">
-					<div class="action-button" @click="onAction('lookPart')">
+				<van-col span="6" v-if="getAuth('lookRegistration')">
+					<div class="action-button" @click="onAction('lookRegistration')">
 						<i class="van-icon van-icon-contact"></i>
 						<span>查看参与人</span>
 					</div>
@@ -326,12 +320,6 @@
 						<span>打开活动</span>
 					</div>
 				</van-col>
-				<van-col span="6" v-if="getAuth('lookReport')">
-					<div class="action-button" @click="onAction('lookReport')">
-						<i class="van-icon van-icon-pending-orders"></i>
-						<span>查看报告</span>
-					</div>
-				</van-col>
 				<van-col span="6" v-if="getAuth('buildReport')">
 					<div class="action-button" @click="onAction('buildReport')">
 						<i class="van-icon van-icon-description"></i>
@@ -344,15 +332,27 @@
 						<span>生成照片墙</span>
 					</div>
 				</van-col>
+				<van-col span="6" v-if="getAuth('lookReport')">
+					<div class="action-button" @click="onAction('lookReport')">
+						<i class="van-icon van-icon-pending-orders"></i>
+						<span>查看报告</span>
+					</div>
+				</van-col>
 				<van-col span="6" v-if="getAuth('shareActivity')">
 					<div class="action-button" @click="onAction('shareActivity')">
 						<i class="van-icon van-icon-share"></i>
 						<span>分享活动</span>
 					</div>
 				</van-col>
+				<van-col span="6" v-if="getAuth('Delete')">
+					<div class="action-button" @click="onAction('Delete')">
+						<i class="van-icon van-icon-delete"></i>
+						<span>删除活动</span>
+					</div>
+				</van-col>
 			</van-row>
 		</van-popup>
-
+  </div>
 	</div>
 
 	<script type="text/javascript">
@@ -366,21 +366,21 @@
 				finished: false,
 				showAction: false,
 				page: 1,
-				selectActivity: '',
-				showClass: 'disable',
-				isAjax:false
+				selectActivity: '', 
+				isAjax: false
 			},
-			created: function () {
-
+			mounted: function () {
+				document.getElementById("loading").className=""; 
+				document.getElementById("action").className=""; 				
 			},
 			methods: {
 				onSearch: function () {
 					this.onRefresh();
 				},
-				onRefresh() {
+				onRefresh: function () {
 					var context = this;
 					context.page = 1;
-					if(context.isAjax) return;
+					if (context.isAjax) return;
 					context.finished = false;
 					context.isAjax = true;
 					axios.post("/ActivityApi/queryLimit", {
@@ -388,9 +388,7 @@
 						pagesize: 15,
 						activityName: context.key
 					}).then(function (response) {
-						var result = response.data;
-						console.log(result);
-						console.log("onRefresh");
+						var result = response.data; 
 						context.loading = false;
 						context.isLoading = false;
 						context.isAjax = false;
@@ -401,9 +399,9 @@
 						context.page += 1;
 					});
 				},
-				onLoad() {
+				onLoad: function () {
 					var context = this;
-					if(context.isAjax) return;
+					if (context.isAjax) return;
 					if (context.finished) return;
 					context.isAjax = true;
 					axios.post("/ActivityApi/queryLimit", {
@@ -411,24 +409,95 @@
 						pagesize: 15,
 						activityName: context.key
 					}).then(function (response) {
-						var result = response.data;
-						console.log(result);
-						console.log("onLoad");
+						var result = response.data; 
 						context.loading = false;
 						context.isAjax = false;
 						context.list = context.list.concat(result.content);
 						if (result.totalPages == context.page || result.totalPages == 0) {
 							context.finished = true;
-						}
-						context.showClass = '';
+						} 
 						context.page += 1;
 					});
 				},
 				addActivity: function () {
 					window.location.href = "${request.contextPath}/MobileActivity/Edit/0"
 				},
-				getAuth: function (v) {
-					return true;
+				getAuth: function (method) {
+					var context = this;
+					var activity = this.selectActivity;
+					if (!activity) return false;
+
+					function isInArray(arr, value) {
+						for (var i = 0; i < arr.length; i++) {
+							if (value === arr[i]) {
+								return true;
+							}
+						}
+						return false;
+					}
+
+					var bs = false; //参与
+					for (var j = 0; j < activity.activityRegistrations.length; j++) {
+						var activityRegistration = activity.activityRegistrations[j];
+						if (activityRegistration.userId == ${userId}) {
+							bs = true;
+						}
+					}
+
+
+					//创建者或责任人权限
+					if ((activity.createId ==${userId} || activity.liabilityId ==${userId}) && new Date() < new Date(activity.startTime
+							.replace(/-/g, "/")) && activity.activityType == "enroll") { //创建者，但活动未开始						
+						context.isAdmin = 1;
+						return isInArray(["Edit", "Delete", "lookRegistration", 'shareActivity'], method);
+					}
+					if ((activity.createId ==${userId} || activity.liabilityId ==${userId}) && new Date() < new Date(activity.startTime
+							.replace(/-/g, "/")) && activity.activityType != "enroll") { //创建者，但活动未开始						
+						context.isAdmin = 1;
+						return isInArray(["Edit", "Delete", "addRegistration", "lookRegistration"], method);
+					}
+					if ((activity.createId ==${userId} || activity.liabilityId ==${userId}) && new Date() >= new Date(activity.startTime
+							.replace(/-/g, "/")) && activity.activityState == "open") { //创建者，活动开始但未关闭					
+						context.isAdmin = 1;
+						return isInArray(["Edit", "uploadResoure", "Delete", "addResoure", "closeActivity", "lookRegistration", "lookResoure",
+							"buildReport", "uploadText"
+						], method);
+					}
+					if ((activity.createId ==${userId} || activity.liabilityId ==${userId}) && new Date() >= new Date(activity.startTime
+							.replace(/-/g, "/")) && activity.activityState == "close") { //创建者，但活动未开始						
+						context.isAdmin = 1;
+						return isInArray(["Delete", "lookRegistration", "lookResoure", "lookReport", "buildReport", "openActivity",
+							"buildReportImage"
+						], method);
+					}
+
+					//参与人权限						
+					if (bs && new Date() < new Date(activity.startTime.replace(/-/g, "/"))) { //参与人，但活动未开始	
+						return isInArray(["lookRegistration"], method);
+					}
+					if (bs && new Date() >= new Date(activity.startTime.replace(/-/g, "/")) && activity.activityState == "open") { //参与人，活动开始但未关闭					
+						return isInArray(["uploadResoure", "lookRegistration", "lookResoure"], method);
+					}
+					if (bs && new Date() >= new Date(activity.startTime.replace(/-/g, "/")) && activity.activityState == "close") { //参与人，活动开始但已关闭并已生成报告					
+						return isInArray(["lookRegistration", "lookResoure", "lookReport"], method);
+					}
+
+					//报名类活动						
+					if (!bs && !(activity.createId ==${userId} || activity.liabilityId ==${userId}) && activity.activityType == "enroll" &&
+						activity.activityRegistrations.length < activity.activityAttach.attendNumber && new Date() < new Date(activity
+							.startTime.replace(/-/g,
+								"/"))) {
+						return isInArray(["enroll"], method);
+					} else {
+						if (!bs && !(activity.createId == ${userId} || activity.liabilityId == ${userId}) && activity.activityType == "openup" &&
+							new Date() >= new Date(activity.startTime.replace(/-/g, "/"))) { //公开类活动
+							return isInArray(["uploadResoure", "lookResoure"], method);
+						} else {
+							context.showAction = false;
+						}
+					}
+
+					return false;
 				},
 				stateClass: function (activity) {
 					var context = this;
@@ -441,14 +510,16 @@
 					if (new Date() >= new Date(activity.startTime.replace(/-/g, "/")) && activity.activityState == "close") {
 						return "state statebackgroud-indianred";
 					}
-					// 					if (new Date() < new Date(activity.startTime.replace(/-/g, "/")) && activity.type == "enroll" && activity.participants
-					// 						.length < activity.attendNumber) {
-					// 						return "state statebackgroud-greenyellow";
-					// 					}
-					// 					if (new Date() < new Date(activity.startTime.replace(/-/g, "/")) && activity.type == "enroll" && activity.participants
-					// 						.length >= activity.attendNumber) {
-					// 						return "state statebackgroud-end";
-					// 					}
+					if (new Date() < new Date(activity.startTime.replace(/-/g, "/")) && activity.activityType == "enroll" &&
+						activity.activityRegistrations
+						.length < activity.activityAttach.attendNumber) {
+						return "state statebackgroud-greenyellow";
+					}
+					if (new Date() < new Date(activity.startTime.replace(/-/g, "/")) && activity.activityType == "enroll" &&
+						activity.activityRegistrations
+						.length >= activity.activityAttach.attendNumber) {
+						return "state statebackgroud-end";
+					}
 				},
 				activityState: function (activity) {
 					var context = this;
@@ -463,20 +534,110 @@
 					if (new Date() >= new Date(activity.startTime.replace(/-/g, "/")) && activity.activityState == "close") {
 						return "已结束";
 					}
-					// 					if (new Date() < new Date(activity.startTime.replace(/-/g, "/")) && activity.type == "enroll" && activity.participants
-					// 						.length < activity.attendNumber) {
-					// 						context.state = "state statebackgroud-greenyellow";
-					// 						return "报名中";
-					// 					}
-					// 					if (new Date() < new Date(activity.startTime.replace(/-/g, "/")) && activity.type == "enroll" && activity.participants
-					// 						.length >= activity.attendNumber) {
-					// 						return "报名结束";
-					// 					}
+					if (new Date() < new Date(activity.startTime.replace(/-/g, "/")) && activity.activityType == "enroll" &&
+						activity.activityRegistrations
+						.length < activity.activityAttach.attendNumber) {
+						context.state = "state statebackgroud-greenyellow";
+						return "报名中";
+					}
+					if (new Date() < new Date(activity.startTime.replace(/-/g, "/")) && activity.activityType == "enroll" &&
+						activity.activityRegistrations
+						.length >= activity.activityAttach.attendNumber) {
+						return "报名结束";
+					}
 				},
 				onShowActions: function (activity) {
 					var context = this;
 					context.showAction = true;
 					context.selectActivity = activity;
+				},
+				onAction:function(method){
+					var context = this;
+					var dialog = this.$dialog;
+					var activity = this.selectActivity;
+					switch(method){
+						case "uploadResoure":
+						window.location.href = "${request.contextPath}/MobileResource/Upload";
+						break;
+						case "Edit":
+						window.location.href = "${request.contextPath}/MobileActivity/Edit/"+activity.id;
+						break;
+						case "addRegistration":
+						window.location.href = "${request.contextPath}/MobileActivity/AddRegistration/"+activity.id;
+						break;
+						case "Delete":
+						  dialog.confirm({
+						  	title: '提示',
+						  	message: '确定要删除该活动吗？'
+						  }).then(function() {
+						  	context.Delete(activity.id);
+						  }).catch(function() {
+						  	dialog.close();
+						  });
+						break;
+						case "closeActivity":
+							dialog.confirm({
+								title: '提示',
+								message: '确定要关闭该活动吗？'
+							}).then(function() {
+								context.Close(activity.id);
+							}).catch(function() {
+								dialog.close();
+							});
+						break;
+						case "openActivity":
+							dialog.confirm({
+								title: '提示',
+								message: '确定要开启该活动吗？'
+							}).then(function() {
+								context.Open(activity.id);
+							}).catch(function() {
+								dialog.close();
+							});
+						break;
+					}  
+				},
+				Delete:function(Id){
+					var context = this;
+					axios.post("/ActivityApi/Delete", {Id:Id}).then(function (response) {
+						var result = response.data;
+						console.log(result);
+						if (result.resultType) {
+						   context.onRefresh();
+							 context.showAction = false;
+							 context.$toast.success(result.message); 
+						}else{
+						 context.$toast.fail(result.message);
+						}
+					});
+				},
+				Close:function(Id){
+					var context = this;
+					axios.post("/ActivityApi/Close", {Id:Id}).then(function (response) {
+						var result = response.data;
+						console.log(result);
+						if (result.resultType) {
+							context.onRefresh();
+							context.showAction = false;
+							context.$toast.success(result.message); 
+						}else{
+						 context.$toast.fail(result.message);
+						}
+					});
+				},
+				Open:function(Id){
+					var context = this;
+					axios.post("/ActivityApi/Open", {Id:Id}).then(function (response) {
+						var result = response.data;
+						console.log(result);
+						if (result.resultType) {
+							context.onRefresh();
+							context.showAction = false;
+							context.$toast.success(result.message); 
+						}else{
+						 context.$toast.fail(result.message);
+						}
+					});
 				},
 			},
 		})

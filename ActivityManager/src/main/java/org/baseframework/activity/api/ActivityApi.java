@@ -29,4 +29,18 @@ public class ActivityApi {
         return activityService.Edit(activity);
     }
 
+    @RequestMapping(value = "/Delete")
+    public OperationResult Delete(Long Id){
+        return activityService.Delete(Id);
+    }
+    @RequestMapping(value = "/Close")
+    public OperationResult Close(Long Id){
+        return  activityService.Close(Id);
+    }
+
+    @RequestMapping(value = "/Open")
+    public OperationResult Open(Long Id){
+        return  activityService.Open(Id);
+    }
+
 }

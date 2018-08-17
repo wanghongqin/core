@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="renderer" content="webkit">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<title>添加参与人</title>
+	<!-- 引入样式 -->
+	<link rel="stylesheet" href="https://unpkg.com/vant/lib/vant-css/index.css">
+	<!-- 引入组件 -->
+	<script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+	<script src="https://unpkg.com/vant/lib/vant.min.js"></script>
+	<script src="${request.contextPath}/js/vue2-editor.js"></script>
+	<script src="${request.contextPath}/util/dateformat.js"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<script src="https://cdn.bootcss.com/es6-promise/4.1.1/es6-promise.auto.js"></script>
+	<script src="${request.contextPath}/util/http.js"></script>
+	<style type="text/css">
+		#app {
+			position: absolute;
+			width: 100%;
+			background: #fff;
+		}
+
+		.row {
+			padding: 15px;
+		}
+
+		.van-cell__title,
+		.van-cell__value {
+			flex: auto !important;
+			-webkit-box-flex: initial !important;
+			-webkit-flex: auto !important;
+		}
+
+		.right {
+			margin-left: 28%;
+		}
+
+		.buttom {
+			margin-bottom: 50px;
+		}
+
+		.btn {
+			position: fixed;
+			bottom: 0px;
+			height: 50px;
+			width: 100%;
+			line-height: 50px;
+			box-shadow: 0 0 20px 0 hsla(0, 0%, 7%, .1), 0 0 0 0 hsla(0, 0%, 7%, .1);
+		}
+
+		.txt {
+			text-align: right;
+			padding-right: 10px;
+			font-size: 0.9rem;
+		}
+
+		.txt b {
+			padding: 0px 3px;
+			font-size: 1rem;
+		}
+
+		.button {
+			padding-left: 10px;
+		}
+
+		.van-button {
+			height: 34px !important;
+			line-height: 32px !important;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="app">
+		<van-checkbox-group v-model="result" class="buttom">
+			<van-cell-group class="row">
+				<van-cell v-for="(item, index) in list" clickable :key="item.id" @click="toggle(index)">
+					<template slot="title">
+						<span class="van-cell-text">{{item.name}}</span>
+						<span class="van-cell-text right">{{item.phone}}</span>
+					</template>
+					<van-checkbox :name="item.id" ref="checkboxes" />
+				</van-cell>
+			</van-cell-group>
+		</van-checkbox-group>
+		<div class="btn">
+			<van-row type="flex">
+				<van-col span="16" class="txt">已选择
+					<b style="color: red;">{{number}}</b>人</van-col>
+				<van-col span="8" class="button">
+					<van-button type="primary">提交</van-button>
+				</van-col>
+			</van-row>
+		</div>
+	</div>
+	<script type="text/javascript">
+		new Vue({
+			el: "#app",
+			data: {
+				list: [{
+					id: 1,
+					name: 'admin',
+					phone: '18615714378'
+				}, {
+					id: 2,
+					name: 'admin',
+					phone: '18615714378'
+				}, {
+					id: 3,
+					name: 'admin',
+					phone: '18615714378'
+				}],
+				result: [1, 2],
+				number: 0
+			},
+			created: function () { 
+				this.number = this.result.length;
+			},
+			methods: {
+				toggle(index) {
+					this.$refs.checkboxes[index].toggle();
+					var number = this.result.length;
+					this.number = number;
+					console.log(this.result);
+				}
+			}
+		})
+	</script>
+</body>
+
+</html>

@@ -49,6 +49,14 @@ public class ActivityAttach extends EntityBase{
     private Integer signIdPoint;
 
     /**
+     * 报名积分
+     */
+    @Column(name = "enrollPoint",columnDefinition = "int default 0")
+    @Getter
+    @Setter
+    private Integer enrollPoint;
+
+    /**
      * 上传资源积分
      */
     @Column(name = "imagePoint",columnDefinition = "int default 0")

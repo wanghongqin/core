@@ -12,9 +12,8 @@ public class AuthUsers extends User {
     public AuthUsers(String username, String password, Collection<? extends GrantedAuthority> authorities) {
         super(username, password, authorities);
         this.username = username;
-        this.password=password;
+        this.password = password;
     }
-
     @Override
     public String getPassword() {
         return password;

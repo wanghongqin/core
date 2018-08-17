@@ -19,9 +19,13 @@ public interface ActivityService {
 
     String Delete(Activity activity);
 
-    String Delete(long Id);
+    OperationResult Delete(long Id);
 
     String findStrById(long Id);
 
     Activity findById(long Id);
+
+    OperationResult Close(long Id);
+
+    OperationResult Open(long Id);
 }

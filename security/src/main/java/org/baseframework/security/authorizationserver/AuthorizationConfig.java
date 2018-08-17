@@ -75,7 +75,6 @@ public class AuthorizationConfig extends AuthorizationServerConfigurerAdapter {
 
     @Bean
     public AuthorizationCodeServices authorizationCodeServices() {
-
         return new InMemoryAuthorizationCodeServices();
     }
 

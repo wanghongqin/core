@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="renderer" content="webkit">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<title>资源上传</title>
+	<!-- 引入样式 -->
+	<link rel="stylesheet" href="https://unpkg.com/vant/lib/vant-css/index.css">
+	<!-- 引入组件 -->
+	<script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+	<script src="https://unpkg.com/vant/lib/vant.min.js"></script>
+	<script src="${request.contextPath}/js/vue2-editor.js"></script>
+	<script src="${request.contextPath}/util/dateformat.js"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<script src="https://cdn.bootcss.com/es6-promise/4.1.1/es6-promise.auto.js"></script>
+	<script src="${request.contextPath}/util/http.js"></script>
+	<style type="text/css">
+		#app {
+			position: absolute;
+			width: 100%;
+			background: #fff;
+		}
+
+		.row {
+			padding: 5px 0px;
+		}
+		.images {
+			width: 98.8%;
+			padding-left: 1%;
+		}
+
+		.images img {
+			width: 31%;
+			float: left;
+			padding: 1%;
+		}
+
+		.cell {
+			margin-top: -1px;
+		}
+
+		.clear {
+			clear: both;
+		}
+		.btn{
+			padding: 5px 20px;
+		}
+		.van-button--bottom-action {
+			margin-top: 10px;
+			color: #fff !important;
+			background-color: #4b0 !important;
+			border: 1px solid #4b0 !important;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="app">
+		<div class="row">
+			<div class="images">
+				<img v-for="img in imageList" :src="img">
+			</div>
+			<div class="clear">
+			</div>
+		</div>
+		<div class="row">
+			<van-cell-group class="cell">
+				<van-field v-model="resource.resourceTag" label="资源标签" placeholder="请输入资源标签" />
+			</van-cell-group>
+			<van-cell-group class="cell">
+				<van-field v-model="resource.resourceGroup" label="资源分组" placeholder="请输入资源分组" />
+			</van-cell-group>
+			<van-cell-group class="cell">
+				<van-field v-model="resource.remark" label="资源说明" type="textarea" placeholder="请输入资源说明" rows="5" />
+			</van-cell-group>
+		</div>
+		<div class="btn">
+			<van-button type="default" bottom-action>提交</van-button>
+		</div>
+	</div>
+	<script type="text/javascript">
+		new Vue({
+			el: "#app",
+			data: {
+				imageList: [
+					'http://www.w3school.com.cn/i/eg_tulip.jpg',
+					'http://www.w3school.com.cn/i/eg_tulip.jpg',
+					'http://www.w3school.com.cn/i/eg_tulip.jpg',
+					'http://www.w3school.com.cn/i/eg_tulip.jpg',
+					'http://www.w3school.com.cn/i/eg_tulip.jpg',
+					'http://www.w3school.com.cn/i/eg_tulip.jpg'
+				],
+				resource: {
+					resourceContent: '',
+					resourceType: '',
+					ownerId: '',
+					resourceTag: '',
+					resourceGroup: '',
+					remark: ''
+				}
+			},
+			methods: {}
+		})
+	</script>
+</body>
+
+</html>
