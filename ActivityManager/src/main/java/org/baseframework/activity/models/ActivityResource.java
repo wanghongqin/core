@@ -28,6 +28,9 @@ public class ActivityResource extends EntityBase {
     @JsonIgnore
     private Resource resource;
 
+    /**
+     * 审核资源标识
+     */
     @Getter
     @Setter
     @Column(name = "enable",columnDefinition = "bit default 0")

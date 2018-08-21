@@ -16,13 +16,8 @@ public class Resource extends EntityBase {
 
     @Getter
     @Setter
-    @Column(name = "resourceType",nullable = false)
-    private String resourceType;
-
-    @Getter
-    @Setter
-    @Column(name = "resourceContent",nullable = false)
-    private String resourceContent;
+    @Column(name = "resourcePath",nullable = false)
+    private String resourcePath;
 
     @Getter
     @Setter

@@ -74,14 +74,4 @@ public class MobileActivityController {
         view.setViewName("/MobileActivity/Edit");
         return view;
     }
-
-
-    @GetMapping("/AddRegistration/{Id}")
-    public  ModelAndView AddRegistration(@PathVariable(name = "Id") int Id){
-        ModelAndView view = new ModelAndView();
-        view.addObject("activityId",Id);
-        view.setViewName("/MobileActivity/AddRegistration");
-        return view;
-    }
-
 }
