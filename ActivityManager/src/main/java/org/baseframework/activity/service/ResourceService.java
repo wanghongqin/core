@@ -1,10 +1,12 @@
 
 package org.baseframework.activity.service;
 
+import org.baseframework.activity.comm.OperationResult;
 import org.baseframework.activity.models.Resource;
 import org.springframework.data.domain.Page;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 public interface ResourceService {
 
@@ -27,12 +29,18 @@ public interface ResourceService {
      * @param request
      * @return
      */
-    String UploadWithStr(HttpServletRequest request);
+    String UploadWithStr(String content,HttpServletRequest request);
 
     /**
      * 上传资源
      * @param request
      * @return
      */
-    Resource Upload(HttpServletRequest request);
+    Resource Upload(String content,HttpServletRequest request);
+
+    OperationResult Upload( HttpServletRequest request);
+
+    List<Resource> UploadResources( HttpServletRequest request);
+
+    List<Resource> findAll(String Ids);
 }

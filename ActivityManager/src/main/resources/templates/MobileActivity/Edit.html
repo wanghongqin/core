@@ -310,6 +310,7 @@
 						}
 					},
 					data: {
+						Id:"${attach.getId()}",
 						attendNumber: "${attach.getAttendNumber()}",
 						signIdPoint: "${attach.getSignIdPoint()}",
 						imagePoint: "${attach.getImagePoint()}",
@@ -367,7 +368,7 @@
 							axios.post("/ActivityApi/Edit", context.activity.data).then(function (response) {
 								var result = response.data;
 								console.log(result);
-								if (result.resultType) {
+								if (result.resultType) {									
 									context.activityAttach.data.activity.Id = result.appendData
 									context.active++;
 								} else {
@@ -385,6 +386,7 @@
 								var result = response.data;
 								console.log(result);
 								if (result.resultType) {
+									context.$toast.success(result.message); 
 									window.location.href = "${request.contextPath}/MobileActivity/Index"
 								} else {
 									context.$toast.fail(result.message);

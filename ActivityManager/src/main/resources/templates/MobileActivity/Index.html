@@ -283,15 +283,15 @@
 						<span>添加文字</span>
 					</div>
 				</van-col>
-				<van-col span="6" v-if="getAuth('lookResoure')">
-					<div class="action-button" @click="onAction('lookResoure')">
+				<van-col span="6" v-if="getAuth('ViewResource')">
+					<div class="action-button" @click="onAction('ViewResource')">
 						<i class="van-icon van-icon-password-view"></i>
 						<span>查看资源</span>
 					</div>
 				</van-col>
 
-				<van-col span="6" v-if="getAuth('addResoure')">
-					<div class="action-button" @click="onAction('addResoure')">
+				<van-col span="6" v-if="getAuth('AuditingResource')">
+					<div class="action-button" @click="onAction('AuditingResource')">
 						<i class="van-icon van-icon-certificate"></i>
 						<span>审核资源</span>
 					</div>
@@ -459,14 +459,14 @@
 					if ((activity.createId ==${userId} || activity.liabilityId ==${userId}) && new Date() >= new Date(activity.startTime
 							.replace(/-/g, "/")) && activity.activityState == "open") { //创建者，活动开始但未关闭					
 						context.isAdmin = 1;
-						return isInArray(["Edit", "uploadResoure", "Delete", "addResoure", "closeActivity", "lookRegistration", "lookResoure",
+						return isInArray(["Edit", "uploadResoure", "Delete", "AuditingResource", "closeActivity", "lookRegistration", "ViewResource",
 							"buildReport", "uploadText"
 						], method);
 					}
 					if ((activity.createId ==${userId} || activity.liabilityId ==${userId}) && new Date() >= new Date(activity.startTime
 							.replace(/-/g, "/")) && activity.activityState == "close") { //创建者，但活动未开始						
 						context.isAdmin = 1;
-						return isInArray(["Delete", "lookRegistration", "lookResoure", "lookReport", "buildReport", "openActivity",
+						return isInArray(["Delete", "lookRegistration", "ViewResource", "lookReport", "buildReport", "openActivity",
 							"buildReportImage"
 						], method);
 					}
@@ -476,10 +476,10 @@
 						return isInArray(["lookRegistration"], method);
 					}
 					if (bs && new Date() >= new Date(activity.startTime.replace(/-/g, "/")) && activity.activityState == "open") { //参与人，活动开始但未关闭					
-						return isInArray(["uploadResoure", "lookRegistration", "lookResoure"], method);
+						return isInArray(["uploadResoure", "lookRegistration", "ViewResource"], method);
 					}
 					if (bs && new Date() >= new Date(activity.startTime.replace(/-/g, "/")) && activity.activityState == "close") { //参与人，活动开始但已关闭并已生成报告					
-						return isInArray(["lookRegistration", "lookResoure", "lookReport"], method);
+						return isInArray(["lookRegistration", "ViewResource", "lookReport"], method);
 					}
 
 					//报名类活动						
@@ -491,7 +491,7 @@
 					} else {
 						if (!bs && !(activity.createId == ${userId} || activity.liabilityId == ${userId}) && activity.activityType == "openup" &&
 							new Date() >= new Date(activity.startTime.replace(/-/g, "/"))) { //公开类活动
-							return isInArray(["uploadResoure", "lookResoure"], method);
+							return isInArray(["uploadResoure", "ViewResource"], method);
 						} else {
 							context.showAction = false;
 						}
@@ -563,7 +563,16 @@
 						window.location.href = "${request.contextPath}/MobileActivity/Edit/"+activity.id;
 						break;
 						case "addRegistration":
-						window.location.href = "${request.contextPath}/MobileActivity/AddRegistration/"+activity.id;
+						window.location.href = "${request.contextPath}/MobileRegistration/AddRegistration/"+activity.id;
+						break;
+						case "lookRegistration":
+						window.location.href = "${request.contextPath}/MobileRegistration/Registration/"+activity.id;
+						break;
+						case "ViewResource":
+						window.location.href = "${request.contextPath}/MobileResource/ViewResource/"+activity.id;
+						break;
+						case "AuditingResource":
+						window.location.href = "${request.contextPath}/MobileResource/AuditingResource/"+activity.id;
 						break;
 						case "Delete":
 						  dialog.confirm({

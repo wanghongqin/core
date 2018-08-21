@@ -1,7 +1,9 @@
 package org.baseframework.activity.service.Imp;
 
+import org.apache.commons.lang3.StringUtils;
 import org.baseframework.activity.comm.FileHelper;
 import org.baseframework.activity.comm.JsonHelper;
+import org.baseframework.activity.comm.OperationResult;
 import org.baseframework.activity.models.Resource;
 import org.baseframework.activity.repository.ResourceRepository;
 import org.baseframework.activity.service.ResourceService;
@@ -13,16 +15,22 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
+import java.util.regex.Pattern;
 
 @Service
+@Transactional
 public class ResourceServiceImp implements ResourceService {
 
     @javax.annotation.Resource
     private ResourceRepository resourceRepository;
+
 
     @Override
     public Page<Resource> queryLimit(HttpServletRequest request, int page, int pagesize) {
@@ -70,16 +78,7 @@ public class ResourceServiceImp implements ResourceService {
     }
 
     @Override
-    public String UploadWithStr(HttpServletRequest request) {
-        Resource resource = Upload(request);
-        if (resource == null)
-            return "";//失败
-        return "";//成功
-    }
-
-    @Override
-    public Resource Upload(HttpServletRequest request) {
-        String content = request.getParameter("content");
+    public String UploadWithStr(String content, HttpServletRequest request) {
         if (content != null && !content.isEmpty()) {
             int infolength = content.indexOf(",");
             // data:image/jpg;
@@ -107,22 +106,95 @@ public class ResourceServiceImp implements ResourceService {
             path.append("resource/");
             if (FileHelper.mkdirs(path.toString())) {
                 String filepath = path.toString() + name + "_" + randNum + suffix;
-                String urlpath = request.getContextPath() + "/resource/" + name + "_" + randNum + suffix;//数据库路径
+                String urlpath = "/resource/" + name + "_" + randNum + suffix;//数据库路径
                 if (FileHelper.save(filepath, baseContent)) { //数据保存成功，则将数据插入到数据库中
-                    //如果数据保存失败，则删除相应资源
-                    Resource resource = new Resource();
-                    resource.setAddTime(new Timestamp(new Date().getTime()));
-                    resource.setResourceContent(urlpath);
-                    Resource model = resourceRepository.saveAndFlush(resource);
-                    if (model == null)
-                        FileHelper.delete(filepath);
-                    return model; //成功
+                    return urlpath;
                 } else {
-                    return null; //失败
+                    return ""; //失败
                 }
             }
-            return null; //失败
+            return ""; //失败
         }
-        return null; //失败
+        return "";
+    }
+
+    @Override
+    public Resource Upload(String content, HttpServletRequest request) {
+        List<Resource> resources = UploadResources(request);
+        if (resources != null && resources.size() > 0)
+            return resources.get(0);
+        return null;
+    }
+
+    @Override
+    public OperationResult Upload(HttpServletRequest request) {
+        if (UploadResources(request) == null)
+            return new OperationResult(false, "资源上传失败");
+        return new OperationResult(true, "资源上传成功");
+    }
+
+    @Override
+    public List<Resource> UploadResources(HttpServletRequest request) {
+        String content = request.getParameter("content");
+        if (StringUtils.isBlank(content))
+            return null;
+        String resourceGroup = request.getParameter("resourceGroup");
+        String resourceTag = request.getParameter("resourceTag");
+        String remark = request.getParameter("remark");
+        String[] contents = StringUtils.split(content, ",");
+        List<Resource> list = new ArrayList<Resource>();
+        boolean b = true;
+        for (String ct : contents) {
+            String path = UploadWithStr(ct, request);
+            if (!StringUtils.isBlank(path)) {
+                Resource resource = new Resource();
+                resource.setAddTime(new Timestamp(new Date().getTime()));
+                resource.setResourcePath(request.getContextPath() + path);
+                resource.setResourceGroup(resourceGroup);
+                resource.setResourceTag(resourceTag);
+                resource.setRemark(remark);
+                list.add(resource);
+            } else {
+                b = false;
+                break;
+            }
+        }
+        if (b) {
+            try {
+                List<Resource> results = resourceRepository.saveAll(list);
+                resourceRepository.flush();
+                return results;
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                //数据保存失败，则删除图片
+                list.forEach(q -> {
+                    String path = q.getResourcePath();
+                    FileHelper.delete(request.getServletContext().getRealPath("/") + path);
+                });
+                return null;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public List<Resource> findAll(String Ids) {
+        String[] ids = StringUtils.split(Ids, ",");
+        List<Long> list = new ArrayList<Long>();
+        boolean b = true;
+        for (String Id : ids) {
+            Pattern pattern = Pattern.compile("^[0-9]*[1-9][0-9]*$");
+            if (pattern.matcher(Id).matches()) {
+                list.add(Long.parseLong(Id));
+            } else {
+                b = false;
+                break;
+            }
+        }
+        if (b) {
+            return resourceRepository.findAllById(list);
+        } else {
+            return null;
+        }
     }
 }

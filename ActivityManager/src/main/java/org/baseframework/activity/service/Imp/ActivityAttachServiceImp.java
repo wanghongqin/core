@@ -7,8 +7,10 @@ import org.baseframework.activity.service.ActivityAttachService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.transaction.Transactional;
 
 @Service
+@Transactional
 public class ActivityAttachServiceImp implements ActivityAttachService {
 
     @Resource
