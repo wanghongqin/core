@@ -27,7 +27,7 @@ security:
       accessTokenUri: http://192.168.1.48:10184/oatuhserver/oauth/token
       userAuthorizationUri: http://192.168.1.48:10184/oatuhserver/oauth/authorize
     resource:
-      userInfoUri: http://192.168.1.48:10184/oatuhserver/user/me
+      userInfoUri: http://192.168.1.48:10184/oatuhserver/user/info
 spring:
   freemarker:
     request-context-attribute: request  #req访问request

@@ -3,9 +3,11 @@ package org.baseframework.activity.mobilecontrollers;
 import org.baseframework.activity.models.Activity;
 import org.baseframework.activity.models.ActivityAttach;
 import org.baseframework.activity.models.ActivityNature;
+import org.baseframework.activity.models.Templete;
 import org.baseframework.activity.models.extend.EActivityState;
 import org.baseframework.activity.models.extend.EActivityType;
 import org.baseframework.activity.service.ActivityService;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,7 +27,8 @@ public class MobileActivityController {
     private ActivityService activityService;
 
     @GetMapping("/Index")
-    public ModelAndView Index() {
+    public ModelAndView Index(OAuth2Authentication auth2Authentication) {
+        System.out.println(auth2Authentication.getUserAuthentication().getDetails());
         ModelAndView view = new ModelAndView();
         view.setViewName("/MobileActivity/Index");
         view.addObject("userId",1);
@@ -57,6 +60,7 @@ public class MobileActivityController {
             Timestamp timestamp = new Timestamp(new Date().getTime());
             activity.setAddTime(timestamp);
             activity.setStartTime(timestamp);
+            activity.setActivityAddress("");
         }
         if (attach == null) {
             attach = new ActivityAttach();
@@ -65,7 +69,13 @@ public class MobileActivityController {
             attach.setEnrollPoint(2);
             attach.setSignIdPoint(2);
             attach.setImagePoint(1);
+            Templete templete = new Templete();
+            templete.setAliasName("");
+            templete.setId(0);
+            attach.setEnrollTemplete(templete);
+            attach.setSummaryTemplete(templete);
             attach.setActivity(activity);
+
         }
 
         view.addObject("activity", activity);

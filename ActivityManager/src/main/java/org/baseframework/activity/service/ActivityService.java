@@ -3,15 +3,16 @@ package org.baseframework.activity.service;
 import org.baseframework.activity.comm.OperationResult;
 import org.baseframework.activity.comm.Table;
 import org.baseframework.activity.models.Activity;
+import org.baseframework.activity.models.extend.ActivityExtend;
 import org.springframework.data.domain.Page;
 
 import javax.servlet.http.HttpServletRequest;
 
 public interface ActivityService {
 
-    Page<Activity> queryLimit(HttpServletRequest request, int page, int limit);
+    Page<ActivityExtend> queryLimit(HttpServletRequest request, int page, int limit);
 
-    Table<Activity> queryLimitStr(HttpServletRequest request, int page, int limit);
+    Table<ActivityExtend> queryLimitStr(HttpServletRequest request, int page, int limit);
 
     OperationResult Edit(Activity activity);
 

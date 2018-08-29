@@ -26,6 +26,14 @@ public class Activity extends EntityBase {
     private String activityName;
 
     /**
+     * 活动地址
+     */
+    @Column(name = "activityAddress",nullable = false)
+    @Getter
+    @Setter
+    private String activityAddress;
+
+    /**
      * 活动内容
      */
     @Column(name = "activityContent", nullable = false,columnDefinition = "TEXT")

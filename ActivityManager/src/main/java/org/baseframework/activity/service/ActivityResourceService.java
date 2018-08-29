@@ -1,6 +1,7 @@
 package org.baseframework.activity.service;
 
 import org.baseframework.activity.comm.OperationResult;
+import org.baseframework.activity.models.ActivityResource;
 import org.baseframework.activity.models.Resource;
 import org.baseframework.activity.models.extend.AcitityResourceExtand;
 import org.springframework.data.domain.Page;
@@ -11,6 +12,8 @@ import java.util.List;
 public interface ActivityResourceService {
 
     Page<AcitityResourceExtand> queryLimit(HttpServletRequest request, int page, int limit);
+
+    List<ActivityResource> findAll(Long activityId,List<Long> ids,Boolean enable);
 
     /**
      * 审核资源

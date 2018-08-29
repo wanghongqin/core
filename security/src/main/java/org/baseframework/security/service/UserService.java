@@ -5,4 +5,6 @@ import org.baseframework.security.models.Users;
 public interface UserService{
 
     Users Eidt(Users users);
+
+    Users FindByName(String Name);
 }

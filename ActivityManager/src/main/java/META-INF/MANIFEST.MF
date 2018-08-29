@@ -1,0 +1,53 @@
+Manifest-Version: 1.0
+Class-Path: byte-buddy-agent-1.7.11.jar objenesis-2.6.jar tomcat-embed
+ -websocket-8.5.32.jar xmlunit-core-2.5.1.jar spring-boot-starter-aop-
+ 2.0.4.RELEASE.jar accessors-smart-1.2.jar spring-cloud-commons-2.0.1.
+ RELEASE.jar spring-data-jpa-2.0.9.RELEASE.jar spring-boot-test-2.0.4.
+ RELEASE.jar mockito-core-2.15.0.jar sitemesh-3.0.1.jar jackson-core-2
+ .9.6.jar spring-tx-5.0.8.RELEASE.jar jsonassert-1.5.0.jar jandex-2.0.
+ 3.Final.jar spring-boot-test-autoconfigure-2.0.4.RELEASE.jar hibernat
+ e-core-5.2.17.Final.jar javax.transaction-api-1.2.jar commons-codec-1
+ .11.jar spring-boot-starter-test-2.0.4.RELEASE.jar jackson-module-par
+ ameter-names-2.9.6.jar lombok-1.16.22.jar spring-cloud-starter-2.0.1.
+ RELEASE.jar spring-boot-starter-logging-2.0.4.RELEASE.jar spring-secu
+ rity-config-5.0.7.RELEASE.jar json-smart-2.3.jar jboss-logging-3.3.2.
+ Final.jar spring-boot-starter-jdbc-2.0.4.RELEASE.jar HdrHistogram-2.1
+ .10.jar spring-security-oauth2-2.2.1.RELEASE.jar jackson-datatype-jsr
+ 310-2.9.6.jar jul-to-slf4j-1.7.25.jar byte-buddy-1.7.11.jar spring-se
+ curity-rsa-1.0.5.RELEASE.jar bcpkix-jdk15on-1.56.jar spring-boot-star
+ ter-json-2.0.4.RELEASE.jar spring-boot-starter-tomcat-2.0.4.RELEASE.j
+ ar spring-boot-actuator-2.0.4.RELEASE.jar spring-cloud-context-2.0.1.
+ RELEASE.jar spring-security-core-5.0.7.RELEASE.jar spring-data-common
+ s-2.0.9.RELEASE.jar hamcrest-core-1.3.jar asm-5.0.4.jar slf4j-api-1.7
+ .25.jar hibernate-commons-annotations-5.0.1.Final.jar json-path-2.4.0
+ .jar dom4j-1.6.1.jar assertj-core-3.9.1.jar log4j-to-slf4j-2.10.0.jar
+  mysql-connector-java-5.1.46.jar spring-expression-5.0.8.RELEASE.jar 
+ spring-jcl-5.0.8.RELEASE.jar jackson-datatype-jdk8-2.9.6.jar LatencyU
+ tils-2.0.3.jar bcprov-jdk15on-1.56.jar spring-cloud-starter-oauth2-2.
+ 0.0.RELEASE.jar spring-web-5.0.8.RELEASE.jar spring-aspects-5.0.8.REL
+ EASE.jar spring-orm-5.0.8.RELEASE.jar spring-boot-starter-web-2.0.4.R
+ ELEASE.jar spring-security-crypto-5.0.7.RELEASE.jar spring-test-5.0.8
+ .RELEASE.jar aspectjweaver-1.8.13.jar freemarker-2.3.28.jar spring-be
+ ans-5.0.8.RELEASE.jar snakeyaml-1.19.jar micrometer-core-1.0.6.jar sp
+ ring-core-5.0.8.RELEASE.jar spring-boot-autoconfigure-2.0.4.RELEASE.j
+ ar jackson-databind-2.9.6.jar validation-api-2.0.1.Final.jar classmat
+ e-1.3.4.jar logback-classic-1.2.3.jar spring-boot-2.0.4.RELEASE.jar s
+ pring-cloud-starter-security-2.0.0.RELEASE.jar spring-boot-starter-2.
+ 0.4.RELEASE.jar core-3.3.3.jar spring-boot-starter-security-2.0.4.REL
+ EASE.jar spring-context-5.0.8.RELEASE.jar antlr-2.7.7.jar hibernate-v
+ alidator-6.0.11.Final.jar spring-security-web-5.0.7.RELEASE.jar log4j
+ -api-2.10.0.jar commons-lang3-3.7.jar spring-cloud-security-2.0.0.REL
+ EASE.jar tomcat-embed-el-8.5.32.jar jackson-mapper-asl-1.9.13.jar spr
+ ing-security-oauth2-autoconfigure-2.0.0.RELEASE.jar jackson-core-asl-
+ 1.9.13.jar spring-jdbc-5.0.8.RELEASE.jar spring-boot-starter-freemark
+ er-2.0.4.RELEASE.jar tomcat-embed-core-8.5.32.jar spring-aop-5.0.8.RE
+ LEASE.jar spring-boot-actuator-autoconfigure-2.0.4.RELEASE.jar spring
+ -context-support-5.0.8.RELEASE.jar spring-boot-starter-data-jpa-2.0.4
+ .RELEASE.jar HikariCP-3.2.0.jar jackson-annotations-2.9.0.jar android
+ -json-0.0.20131108.vaadin1.jar hamcrest-library-1.3.jar javax.annotat
+ ion-api-1.3.2.jar spring-webmvc-5.0.8.RELEASE.jar javassist-3.22.0-GA
+ .jar hibernate-jpa-2.1-api-1.0.2.Final.jar spring-boot-starter-actuat
+ or-2.0.4.RELEASE.jar logback-core-1.2.3.jar spring-security-jwt-1.0.9
+ .RELEASE.jar junit-4.12.jar
+Main-Class: org.baseframework.activity.ActivityApplication
+

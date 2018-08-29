@@ -17,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.servlet.http.HttpServletRequest;
@@ -56,9 +57,9 @@ public class ActivityResourceServiceImp implements ActivityResourceService {
                 list.add(criteriaBuilder.equal(activityIdpath, activityId));
             }
             if (!StringUtils.isBlank(enable)) {
-                if (enable == "true" || enable == "false") {
+                if (enable.equals("true") || enable.equals("false")) {
                     Path enablepath = root.get("enable");
-                    list.add(criteriaBuilder.equal(enablepath, enable == "true" ? 1 : 0));
+                    list.add(criteriaBuilder.equal(enablepath, enable.equals("true") ? 1 : 0));
                 }
             }
             Predicate[] p = new Predicate[list.size()];
@@ -84,6 +85,38 @@ public class ActivityResourceServiceImp implements ActivityResourceService {
         return extands;
     }
 
+    @Override
+    public List<ActivityResource> findAll(Long activityId, List<Long> ids, Boolean enable) {
+        List<ActivityResource> activityResources = activityResourceRepository.findAll((Specification<ActivityResource>) (root, query, criteriaBuilder) ->
+        {
+            List<Predicate> predicates = new ArrayList<Predicate>();
+            if(activityId!=null&&activityId>0) {
+                Path activityIdpath = root.get("activity").get("Id");
+                predicates.add(criteriaBuilder.equal(activityIdpath, activityId));
+            }
+
+            if(enable!=null){
+                Path enablepath = root.get("enable");
+                predicates.add(criteriaBuilder.equal(enablepath, enable ? 1 : 0));
+            }
+            Predicate[] p = new Predicate[predicates.size()];
+            Predicate predicate = criteriaBuilder.and(predicates.toArray(p));
+
+            if(ids!=null&&ids.size()>0){
+                Path resourceIdpath = root.get("resource").get("Id");
+                CriteriaBuilder.In<Object> in = criteriaBuilder.in(resourceIdpath);
+                for (long id:ids) {
+                    in.value(id);
+                }
+                predicate = criteriaBuilder.and(predicate, criteriaBuilder.and(in));
+            }
+
+            return predicate;
+        });
+
+        return activityResources;
+    }
+
     /**
      * 审核活动资源
      *
@@ -107,14 +140,7 @@ public class ActivityResourceServiceImp implements ActivityResourceService {
             }
         }
         if (b) {
-            List<ActivityResource> activityResources = activityResourceRepository.findAll((Specification<ActivityResource>) (root, query, criteriaBuilder) ->
-            {
-                List<Predicate> predicates = new ArrayList<Predicate>();
-                Path activityIdpath = root.get("activity").get("Id");
-                predicates.add(criteriaBuilder.equal(activityIdpath, activityId));
-                Predicate[] p = new Predicate[predicates.size()];
-                return criteriaBuilder.and(predicates.toArray(p));
-            });
+            List<ActivityResource> activityResources = this.findAll(activityId,null,null);
             try {
                 activityResourceRepository.auditingResource(activityId, list);
                 activityResourceRepository.cancalResource(activityId, list);

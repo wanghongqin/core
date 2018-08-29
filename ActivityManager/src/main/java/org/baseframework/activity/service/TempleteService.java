@@ -1,5 +1,9 @@
 package org.baseframework.activity.service;
 
-public interface TempleteService {
+import org.baseframework.activity.models.Templete;
 
+import java.util.List;
+
+public interface TempleteService {
+    List<Templete> getTempleteWithType(String type);
 }

@@ -38,4 +38,10 @@ public class UserServiceImp implements UserDetailsService, UserService {
         Users model = usersRepository.saveAndFlush(users);
         return  model;
     }
+
+    @Override
+    public Users FindByName(String Name) {
+        Users users = usersRepository.getUsersByLoginName(Name);
+        return users;
+    }
 }

@@ -244,7 +244,7 @@
 								<div class="meta-info">
 									<span>{{item.startTime}}</span>
 									<span>{{item.activityRegistrations.length}}人参与</span>
-									<span>{{item.activityResources.length}}素材</span>
+									<span>{{item.activityResourceSize}}素材</span>
 								</div>
 							</div>
 						</div>
@@ -481,10 +481,14 @@
 					if (bs && new Date() >= new Date(activity.startTime.replace(/-/g, "/")) && activity.activityState == "close") { //参与人，活动开始但已关闭并已生成报告					
 						return isInArray(["lookRegistration", "ViewResource", "lookReport"], method);
 					}
-
+					
+					var attendNumber = 0;
+					if(activity.activityAttach){
+						attendNumber = activity.activityAttach.attendNumber;
+					}
+					
 					//报名类活动						
-					if (!bs && !(activity.createId ==${userId} || activity.liabilityId ==${userId}) && activity.activityType == "enroll" &&
-						activity.activityRegistrations.length < activity.activityAttach.attendNumber && new Date() < new Date(activity
+					if (!bs && !(activity.createId ==${userId} || activity.liabilityId ==${userId}) && activity.activityType == "enroll" &&activity.activityRegistrations.length < attendNumber && new Date() < new Date(activity
 							.startTime.replace(/-/g,
 								"/"))) {
 						return isInArray(["enroll"], method);
@@ -501,6 +505,10 @@
 				},
 				stateClass: function (activity) {
 					var context = this;
+					var attendNumber = 0;
+					if(activity.activityAttach){
+						attendNumber = activity.activityAttach.attendNumber;
+					}
 					if (new Date() < new Date(activity.startTime.replace(/-/g, "/")) && activity.activityType != "enroll") {
 						return "state";
 					}
@@ -512,17 +520,21 @@
 					}
 					if (new Date() < new Date(activity.startTime.replace(/-/g, "/")) && activity.activityType == "enroll" &&
 						activity.activityRegistrations
-						.length < activity.activityAttach.attendNumber) {
+						.length < attendNumber) {
 						return "state statebackgroud-greenyellow";
 					}
 					if (new Date() < new Date(activity.startTime.replace(/-/g, "/")) && activity.activityType == "enroll" &&
 						activity.activityRegistrations
-						.length >= activity.activityAttach.attendNumber) {
+						.length >= attendNumber) {
 						return "state statebackgroud-end";
 					}
 				},
 				activityState: function (activity) {
 					var context = this;
+					var attendNumber = -1;
+					if(activity.activityAttach){
+						attendNumber = activity.activityAttach.attendNumber;
+					}
 					if (new Date() < new Date(activity.startTime.replace(/-/g, "/")) && activity.activityType != "enroll") {
 						context.state = "state";
 						return "未开始";
@@ -536,13 +548,13 @@
 					}
 					if (new Date() < new Date(activity.startTime.replace(/-/g, "/")) && activity.activityType == "enroll" &&
 						activity.activityRegistrations
-						.length < activity.activityAttach.attendNumber) {
+						.length < attendNumber) {
 						context.state = "state statebackgroud-greenyellow";
 						return "报名中";
 					}
 					if (new Date() < new Date(activity.startTime.replace(/-/g, "/")) && activity.activityType == "enroll" &&
 						activity.activityRegistrations
-						.length >= activity.activityAttach.attendNumber) {
+						.length >= attendNumber) {
 						return "报名结束";
 					}
 				},

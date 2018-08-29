@@ -38,7 +38,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().ignoringAntMatchers("/oauth/authorize", "/oauth/token", "/oauth/rest_token", "/user/me", "/css/**", "/js/**");
+        http.csrf().ignoringAntMatchers("/oauth/authorize", "/oauth/token", "/oauth/rest_token", "/user/info", "/css/**", "/js/**");
         http.requestMatchers().and().cors()
                 .and().csrf()
                 .requireCsrfProtectionMatcher(new AntPathRequestMatcher("/oauth/authorize")).and()

@@ -10,6 +10,7 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/ActivityManager" />
             <option value="$PROJECT_DIR$/UserCenter" />
+            <option value="$PROJECT_DIR$/baseconfig" />
             <option value="$PROJECT_DIR$/security" />
           </set>
         </option>

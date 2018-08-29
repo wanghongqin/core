@@ -95,6 +95,7 @@
 				page: 1,
 				colHeight:[0,0,0],
 				totalWidth:0,
+				isAjax:false
 			},
 			created:function(){
 				this.totalWidth = $(document).width();
@@ -109,10 +110,10 @@
 					axios.post("/ActivityResourceApi/queryLimit", {
 						currentPage: context.page,
 						pagesize: 15,
-						activityId: '${activityId}'
+						activityId: '${activityId}',
+						enable:"true"
 					}).then(function (response) {
 						var result = response.data;
-
 						context.loading = false;
 						context.isLoading = false;
 						context.isAjax = false;
@@ -132,7 +133,8 @@
 					axios.post("/ActivityResourceApi/queryLimit", {
 						currentPage: context.page,
 						pagesize: 15,
-						activityId: '${activityId}'
+						activityId: '${activityId}',
+						enable:"true"
 					}).then(function (response) {
 						var result = response.data;
 						console.log(result)

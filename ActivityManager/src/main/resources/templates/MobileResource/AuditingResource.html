@@ -85,8 +85,8 @@
 		.van-checkbox {
 			position: absolute;
 		}
-		
-		.van-icon::before{
+
+		.van-icon::before {
 			margin-top: 2px;
 		}
 	</style>
@@ -107,7 +107,8 @@
 		</van-checkbox-group>
 		<div class="btn">
 			<van-row type="flex">
-				<van-col span="16" class="txt">已选择<b style="color: red;">{{number}}</b>条</van-col>
+				<van-col span="16" class="txt">已选择
+					<b style="color: red;">{{number}}</b>条</van-col>
 				<van-col span="8" class="button">
 					<van-button type="primary" @click="submitdata">提交</van-button>
 				</van-col>
@@ -126,10 +127,18 @@
 				page: 1,
 				colHeight: [0, 0, 0],
 				totalWidth: 0,
-				result: [1, 2],
+				result: [],
+				isAjax: false
 			},
 			created: function () {
 				this.totalWidth = $(document).width();
+				var resouceIds = "${resouceIds}";
+				if (resouceIds) {
+					this.result = resouceIds.split(",").map(function (data) {
+						return +data;
+					});
+				}
+
 			},
 			methods: {
 				onRefresh: function () {
@@ -186,30 +195,24 @@
 				checkHeight: function (event) {
 					this.Calculation($(event.target));
 				},
-				checkPosition: function (event) {
-					$(event.target).css({
-						"bottom": 10,
-						"right": 10
-					});
-				},
-				submitdata:function(){
-					if(this.result.length==0){
+				submitdata: function () {
+					if (this.result.length == 0) {
 						this.$toast.fail('请选择资源');
 						return false;
 					}
 					var resouceIds = this.result.join(",");
 					var context = this;
 					axios.post("/ActivityResourceApi/AuditingResource/${activityId}", {
-						resouceIds:resouceIds
+						resouceIds: resouceIds
 					}).then(function (response) {
 						var result = response.data;
 						console.log(result);
-						 if (result.resultType) {
-						 	 context.$toast.success(result.message); 
+						if (result.resultType) {
+							context.$toast.success(result.message);
 							window.location.href = "${request.contextPath}/MobileActivity/Index"
-						 } else {
-						 	context.$toast.fail(result.message);
-						 }
+						} else {
+							context.$toast.fail(result.message);
+						}
 					});
 				},
 				Calculation: function (it) {

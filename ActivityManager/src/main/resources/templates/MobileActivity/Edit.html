@@ -8,6 +8,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	<title>活动编辑</title>
 	<!-- 引入样式 -->
+	<script src="${request.contextPath}/js/jquery.min.js" type="text/javascript"></script>
 	<link rel="stylesheet" href="https://unpkg.com/vant/lib/vant-css/index.css">
 	<!-- 引入组件 -->
 	<script src="https://unpkg.com/vue/dist/vue.min.js"></script>
@@ -18,11 +19,13 @@
 	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 	<script src="https://cdn.bootcss.com/es6-promise/4.1.1/es6-promise.auto.js"></script>
 	<script src="${request.contextPath}/util/http.js"></script>
+	<script src="${request.contextPath}/js/underscore-min.js" type="text/javascript"></script>
 	<style type="text/css">
 		#app {
 			position: absolute;
-			width: 100%; 
+			width: 100%;
 			background: #fff;
+			display: none;
 		}
 
 		.content {
@@ -48,6 +51,7 @@
 
 		.ql-toolbar {
 			display: none;
+			a
 		}
 
 		.quillWrapper {
@@ -98,6 +102,49 @@
 		.van-toast--default {
 			width: auto !important;
 		}
+
+		.item {
+			width: 45%;
+			position: absolute;
+			border: 1px solid #11e87b;
+		}
+
+		.van-radio__input {
+			height: auto !important;
+			font-size: 22px !important;
+		}
+
+		img {
+			width: 100%;
+		}
+
+		.van-radio {
+			position: absolute;
+		}
+
+		#summaryTemple,
+		#enrollTemplete {
+			position: relative;
+			overflow: auto;
+		}
+
+		#summaryTempletes,
+		#enrollTempletes {
+			background: #f7f7f7;
+		}
+
+		.aliasName {
+			position: absolute;
+			width: 100%;
+			top: 0px;
+			left: 0px;
+			text-align: center;
+			background: rgba(125, 120, 120, 0.6);
+			color: #fff;
+			padding: 2px 0px;
+			font-size: 0.9rem;
+			font-weight: 600;
+		}
 	</style>
 </head>
 
@@ -114,6 +161,9 @@
 				<van-tab>
 					<van-cell-group>
 						<van-field v-model="activity.data.activityName" required label="活动名称" placeholder="请输入活动名称" />
+					</van-cell-group>
+					<van-cell-group class="cell">
+						<van-field v-model="activity.data.activityAddress" required label="活动地址" placeholder="请输入活动地址" />
 					</van-cell-group>
 					<van-cell-group class="cell">
 						<div class="van-cell van-cell--required van-hairline van-field">
@@ -165,6 +215,16 @@
 				<van-tab>
 
 					<van-cell-group :class="className">
+						<van-field v-model="enrollTemplete" label="报名模板" placeholder="请选择报名模板" readonly required @click="enrollTempleteValue" />
+						<van-field v-model="activityAttach.data.enrollTemplete.Id" type="hidden" />
+					</van-cell-group>
+
+					<van-cell-group class="cell">
+						<van-field v-model="summaryTemplete" label="总结模板" placeholder="请选择总结模板" readonly required @click="summaryTempleteValue" />
+						<van-field v-model="activityAttach.data.summaryTemplete.Id" type="hidden" />
+					</van-cell-group>
+
+					<van-cell-group :class="className">
 						<van-field v-model="activityAttach.data.attendNumber" label="参与人数" readonly placeholder="请输入参与人数" required @click="setAttendValue"
 						/>
 					</van-cell-group>
@@ -191,6 +251,42 @@
 					<van-button type="default" bottom-action @click="submitdata">提交</van-button>
 				</van-tab>
 			</van-tabs>
+
+
+			<van-popup v-model="enrollTempleteshow" position="bottom">
+				<div class="van-hairline--top-bottom van-picker__toolbar">
+					<div class="van-picker__cancel" @click="cancelRadio('enrollTemplete')">取消</div>
+					<!---->
+					<div class="van-picker__confirm" @click="okRadio('enrollTemplete')">确认</div>
+				</div>
+				<van-radio-group v-model="enrollTempleteId" class="buttom" id="enrollTemplete">
+					<div id="enrollTempletes" class="buttom row">
+						<div class="item" v-for="(item,index) in enrollTempletes" @click="toggle(item.id,'enrollTemplete',item.aliasName)">
+							<div class="aliasName">{{item.aliasName}}</div>
+							<img :src="'${request.contextPath}/'+item.templeteThumbnail" @load="checkEnrollHeight" />
+							<van-radio :name="item.id" />
+						</div>
+					</div>
+				</van-radio-group>
+			</van-popup>
+
+			<van-popup v-model="summaryTempleteshow" position="bottom">
+				<div class="van-hairline--top-bottom van-picker__toolbar">
+					<div class="van-picker__cancel" @click="cancelRadio('summaryTemplete')">取消</div>
+					<!---->
+					<div class="van-picker__confirm" @click="okRadio('summaryTemplete')">确认</div>
+				</div>
+				<van-radio-group v-model="summaryTempleteId" class="buttom" id="summaryTemple">
+					<div id="summaryTempletes" class="buttom row">
+						<div class="item" v-for="(item,index) in summaryTempletes" @click="toggle(item.id,'summaryTemplete',item.aliasName)">
+							<div class="aliasName">{{item.aliasName}}</div>
+							<img :src="'${request.contextPath}/'+item.templeteThumbnail" @load="checkSummaryHeight" />
+							<van-radio :name="item.id" />
+						</div>
+					</div>
+				</van-radio-group>
+			</van-popup>
+
 			<van-popup v-model="activitytypeshow" position="bottom">
 				<van-picker title="活动类型" :columns="activitytypecolumns" show-toolbar @confirm="setActivitytype" @cancel="activitytypeshow=false"
 				/>
@@ -224,6 +320,10 @@
 				liabilityIdshow: false,
 				activitytypeshow: false,
 				activitynatureshow: false,
+				enrollTempleteshow: false,
+				summaryTempleteshow: false,
+				summaryTempleteId: '',
+				enrollTempleteId: '',
 				show: false,
 				liability: "",
 				activitytype: "",
@@ -233,6 +333,15 @@
 				liabilitycolumns: [],
 				activitytypecolumns: [],
 				activitynaturecolumns: [],
+				summaryTempletes: [],
+				enrollTempletes: [],
+				enrollTemplete: '',
+				summaryTemplete: '',
+				enrollTempletetemp: '',
+				summaryTempletetemp: '',
+				colenrollHeight: [0, 0],
+				colsummaryHeight: [0, 0],
+				totalWidth: 0,
 				className: "disable",
 				classPoint: 'disable',
 				activity: {
@@ -240,6 +349,10 @@
 						activityName: {
 							required: true,
 							message: "请输入活动名称"
+						},
+						activityAddress: {
+							required: true,
+							message: "请输入活动地址"
 						},
 						activityContent: {
 							required: true,
@@ -252,11 +365,13 @@
 						activityNature: {
 							Id: {
 								required: true,
+								regex: /^[1-9]\d*$/,
 								message: "请选择活动性质"
 							}
 						},
 						liabilityId: {
 							required: true,
+							regex: /^[1-9]\d*$/,
 							message: "请选择活动负责人"
 						},
 						startTime: {
@@ -267,6 +382,7 @@
 					data: {
 						Id: "${activity.getId()}",
 						activityName: "${activity.getActivityName()}",
+						activityAddress: "${activity.getActivityAddress()}",
 						addTime: "${activity.getAddTime()}",
 						createId: "${activity.getCreateId()}",
 						activityState: "${activity.getActivityState()}",
@@ -276,7 +392,7 @@
 						activityContent: '${activity.getActivityContent()}',
 						remark: '${activity.getRemark()}',
 						activityNature: {
-							Id: ''
+							Id: '${activity.getActivityNature().getId()}'
 						},
 					}
 				},
@@ -305,12 +421,20 @@
 						activity: {
 							Id: {
 								required: true,
+								regex: /^[1-9]\d*$/,
 								message: "没有找到相应活动"
+							}
+						},
+						summaryTemplete: {
+							Id: {
+								required: true,
+								regex: /^[1-9]\d*$/,
+								message: "请选择总结模板"
 							}
 						}
 					},
 					data: {
-						Id:"${attach.getId()}",
+						Id: "${attach.getId()}",
 						attendNumber: "${attach.getAttendNumber()}",
 						signIdPoint: "${attach.getSignIdPoint()}",
 						imagePoint: "${attach.getImagePoint()}",
@@ -318,40 +442,26 @@
 						enrollPoint: "${attach.getEnrollPoint()}",
 						activity: {
 							Id: "${attach.getActivity().getId()}"
+						},
+						enrollTemplete: {
+							Id: "${attach.getEnrollTemplete().getId()}"
+						},
+						summaryTemplete: {
+							Id: "${attach.getSummaryTemplete().getId()}"
 						}
 					}
 				}
 			},
 			mounted: function () {
-				var values = [];
-				values.push({
-					type: 'enroll',
-					text: '报名类活动'
-				});
-				values.push({
-					type: 'openup',
-					text: '公开类活动'
-				});
-				values.push({
-					type: 'invitation',
-					text: '邀请类活动'
-				});
-				this.activitytypecolumns.push({
-					values: values,
-					defaultIndex: 0
-				});
-				this.liabilitycolumns.push({
-					values: [{
-						id: 1,
-						text: 'test'
-					}],
-					defaultIndex: 0
-				});
-				this.GetActivityNatures();
-
 				var context = this;
+				context.totalWidth = $(document).width();
+				this.GetActivityType();
+				this.GetActivityNatures();
+				this.Getliability();
 				var time = "${activity.getStartTime()}";
-				time = time.substring(0, time.lastIndexOf(".")).replace(/-/g, "/");
+				if (time.indexOf(".") > 0) {
+					time = time.substring(0, time.lastIndexOf(".")).replace(/-/g, "/");
+				}
 				if (!isNaN(new Date(time))) {
 					var value = new Date(time);
 					context.activity.data.startTime = value.format("yyyy-MM-dd hh:mm:ss");
@@ -359,6 +469,17 @@
 				} else {
 					context.Time = new Date();
 				}
+
+				if (context.activity.data.Id != 0) { 
+					context.enrollTemplete = '${attach.getEnrollTemplete().getAliasName()}';
+					context.enrollTempletetemp = '${attach.getEnrollTemplete().getAliasName()}';
+					context.summaryTemplete = '${attach.getSummaryTemplete().getAliasName()}';
+					context.summaryTempletetemp = '${attach.getSummaryTemplete().getAliasName()}';
+					context.enrollTempleteId = "${attach.getEnrollTemplete().getId()}";
+					context.summaryTempleteId = "${attach.getSummaryTemplete().getId()}";
+				}
+
+				$("#app").show();
 			},
 			methods: {
 				next: function () {
@@ -368,7 +489,12 @@
 							axios.post("/ActivityApi/Edit", context.activity.data).then(function (response) {
 								var result = response.data;
 								console.log(result);
-								if (result.resultType) {									
+								if (result.resultType) {
+									if (context.activity.data.activityType != "${activity.getActivityType()}") {
+										context.activityAttach.data.attendNumber = "0";
+										context.activityAttach.data.signIdPoint = "0";
+										context.activityAttach.data.enrollPoint = "0";
+									}
 									context.activityAttach.data.activity.Id = result.appendData
 									context.active++;
 								} else {
@@ -386,7 +512,7 @@
 								var result = response.data;
 								console.log(result);
 								if (result.resultType) {
-									context.$toast.success(result.message); 
+									context.$toast.success(result.message);
 									window.location.href = "${request.contextPath}/MobileActivity/Index"
 								} else {
 									context.$toast.fail(result.message);
@@ -413,10 +539,26 @@
 										break;
 									}
 								}
+								if (rules[key][k].regex) {
+									var reg = new RegExp(rules[key][k].regex);
+									if (!reg.test(values[key][k])) {
+										context.$toast.fail(rules[key][k].message);
+										result = false;
+										break;
+									}
+								}
 							}
 						} else {
 							if (rules[key].required) {
 								if (values[key].length == 0 || values[key] == "") {
+									context.$toast.fail(rules[key].message);
+									result = false;
+									break;
+								}
+							}
+							if (rules[key].regex) {
+								var reg = new RegExp(rules[key].regex);
+								if (!reg.test(values[key])) {
 									context.$toast.fail(rules[key].message);
 									result = false;
 									break;
@@ -573,26 +715,187 @@
 
 					}
 				},
+				enrollTempleteValue: function () {
+					var context = this;
+					this.GetTemplete("enroll");
+					context.enrollTempleteshow = true;
+				},
+				summaryTempleteValue: function () {
+					var context = this;
+					this.GetTemplete("summary");
+					context.summaryTempleteshow = true;
+				},
+				cancelRadio: function (type) {
+					if (type == "enrollTemplete") {
+						if (this.activityAttach.data.enrollTemplete.Id == 0) {
+							this.enrollTempleteId = '';
+							this.enrollTemplete = "";
+						} else {
+							this.enrollTempleteId = this.activityAttach.data.enrollTemplete.Id;
+							this.enrollTemplete = this.enrollTempletetemp;
+						}
+						this.enrollTempleteshow = false;
+
+					} else if (type == "summaryTemplete") {
+						if (this.activityAttach.data.enrollTemplete.Id == 0) {
+							this.summaryTempleteId = '';
+							this.summaryTemplete = '';
+						} else {
+							this.summaryTempleteId = this.activityAttach.data.summaryTemplete.Id;
+							this.summaryTemplete = this.summaryTempletetemp;
+						}
+						this.summaryTempleteshow = false;
+
+					}
+				},
+				okRadio: function (type) {
+					if (type == "enrollTemplete") {
+						this.enrollTempleteshow = false;
+						this.enrollTempletetemp = this.enrollTemplete;
+						this.activityAttach.data.enrollTemplete.Id = this.enrollTempleteId;
+					} else if (type == "summaryTemplete") {
+						this.summaryTempleteshow = false;
+						this.summaryTempletetemp = this.summaryTemplete;
+						this.activityAttach.data.summaryTemplete.Id = this.summaryTempleteId;
+					}
+				},
+				toggle: function (index, type, aliasName) {
+					if (type == "enrollTemplete") {
+						this.enrollTempleteId = index;
+						this.enrollTemplete = aliasName;
+					} else if (type == "summaryTemplete") {
+						this.summaryTempleteId = index;
+						this.summaryTemplete = aliasName;
+					}
+				},
+				checkEnrollHeight: function (event) {
+					this.Calculation($(event.target), this.colenrollHeight, $("#enrollTempletes"));
+				},
+				checkSummaryHeight: function (event) {
+					this.Calculation($(event.target), this.colsummaryHeight, $("#summaryTempletes"));
+				},
+				Calculation: function (it, colHeight, el) {
+					var totalWidth = this.totalWidth;
+					var eachWidth = it.width();
+					var eachHeight = it.height();
+
+					//计算出一行能排布几张图片
+					var columNum = Math.floor(totalWidth / eachWidth);
+					//将剩余的空间设置成外边距
+					var margin = (totalWidth - eachWidth * columNum) / (columNum + 1);
+					minValue = _.min(colHeight);
+					// 最小值的位置！
+					minIndex = _.indexOf(colHeight, minValue);
+					var parentItem = it.parent(".item");
+					var left = margin + (margin + eachWidth) * minIndex;
+					parentItem.css({
+						"top": minValue,
+						"left": left
+					});
+					var checkbox = it.siblings(".van-radio");
+					checkbox.css({
+						"bottom": 10,
+						"right": 10
+					});
+					//改变总列高数组的值
+					colHeight[minIndex] += eachHeight + margin;
+
+					//让大盒子根据最高的列设置高度
+					el.css("height", _.max(colHeight));
+				},
+				GetTemplete: function (type) {
+					var context = this;
+					axios.post("/TempleteApi/getTempleteWithType", {
+						type: type
+					}).then(function (response) {
+						var data = response.data;
+						if (type == 'enroll') {
+							$("#enrollTemplete").height($(window).height() - 160); 
+							context.enrollTempletes = data;
+						}
+						if (type == 'summary') {
+							$("#summaryTemple").height($(window).height() - 160);							
+							context.summaryTempletes = data; 
+						}
+					});
+				},
+				Getliability: function () {
+					var context = this;
+					axios.post("/ActivityApi/Getliability").then(function (response) {
+						var data = response.data;
+						var values = [];
+						var index = 0;
+						for (var i = 0; i < data.length; i++) {
+							var d = data[i];
+							values.push({
+								id: d.id,
+								text: d.name
+							});
+							if (context.activity.data.Id != 0) {
+								if ("${activity.getLiabilityId()}" == d.id + "") {
+									index = i;
+									context.liability = d.name;
+									context.activity.data.liabilityId = d.id;
+								}
+							}
+						}
+						context.liabilitycolumns.push({
+							values: values,
+							defaultIndex: index
+						});
+					});
+				},
+				GetActivityType: function () {
+					var context = this;
+					axios.post("/ActivityApi/GetActivityType").then(function (response) {
+						var data = response.data;
+						var values = [];
+						var index = 0;
+						for (var i = 0; i < data.length; i++) {
+							var d = data[i];
+							values.push({
+								type: d.type,
+								text: d.dec
+							});
+							if (context.activity.data.Id != 0) {
+								if ("${activity.getActivityType()}" == d.type) {
+									index = i;
+									context.activitytype = d.dec;
+									context.activity.data.activityType = d.type;
+								}
+								if ("${activity.getActivityType()}" == "enroll") {
+									context.className = "cell";
+									context.classPoint = "cell";
+								} else {
+									context.className = "disable";
+									context.classPoint = "disable";
+								}
+							}
+						}
+						context.activitytypecolumns.push({
+							values: values,
+							defaultIndex: index
+						});
+					});
+				},
 				GetActivityNatures: function () {
 					var context = this;
 					axios.post("/ActivityNatureApi/queryActivityNature").then(function (response) {
 						var data = response.data;
 						console.log(response.data);
 						var values = [];
+						var index = 0;
 						for (var i = 0; i < data.length; i++) {
 							var d = data[i];
 							values.push({
 								id: d.id,
 								text: d.activityNature
 							});
-						}
-						var index = 0;
-						for (var i = 0; i < data.length; i++) {
-							var d = data[i];
 							if (context.activity.data.Id != 0) {
-								if (context.activity.data.activityNature.Id == d.id) {
+								if ("${activity.getActivityNature().getId()}" == d.id + "") {
 									index = i;
 									context.activitynature = d.activityNature;
+									context.activity.data.activityNature.Id = d.id;
 								}
 							}
 						}
