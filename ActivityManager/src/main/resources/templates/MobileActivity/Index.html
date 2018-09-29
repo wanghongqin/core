@@ -420,7 +420,7 @@
 					});
 				},
 				addActivity: function () {
-					window.location.href = "${request.contextPath}/MobileActivity/Edit/0"
+					window.location.href = "${request.contextPath}/activity/mobileactivity/edit/0"
 				},
 				getAuth: function (method) {
 					var context = this;
@@ -569,22 +569,22 @@
 					var activity = this.selectActivity;
 					switch(method){
 						case "uploadResoure":
-						window.location.href = "${request.contextPath}/MobileResource/Upload";
+						window.location.href = "${request.contextPath}/activity/mobileresource/upload/"+activity.id;
 						break;
 						case "Edit":
-						window.location.href = "${request.contextPath}/MobileActivity/Edit/"+activity.id;
+						window.location.href = "${request.contextPath}/activity/mobileactivity/edit/"+activity.id;
 						break;
 						case "addRegistration":
-						window.location.href = "${request.contextPath}/MobileRegistration/AddRegistration/"+activity.id;
+						window.location.href = "${request.contextPath}/activity/mobileregistration/addregistration/"+activity.id;
 						break;
 						case "lookRegistration":
-						window.location.href = "${request.contextPath}/MobileRegistration/Registration/"+activity.id;
+						window.location.href = "${request.contextPath}/activity/mobileregistration/registration/"+activity.id;
 						break;
 						case "ViewResource":
-						window.location.href = "${request.contextPath}/MobileResource/ViewResource/"+activity.id;
+						window.location.href = "${request.contextPath}/activity/mobileresource/viewresource/"+activity.id;
 						break;
 						case "AuditingResource":
-						window.location.href = "${request.contextPath}/MobileResource/AuditingResource/"+activity.id;
+						window.location.href = "${request.contextPath}/activity/mobileresource/auditingresource/"+activity.id;
 						break;
 						case "Delete":
 						  dialog.confirm({

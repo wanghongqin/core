@@ -8,11 +8,12 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	<title>查看资源</title>
 	<script src="${request.contextPath}/js/jquery.min.js" type="text/javascript"></script>
+	<link rel="stylesheet" href="${request.contextPath}/css/loading.css">
 	<!-- 引入样式 -->
 	<link rel="stylesheet" href="https://unpkg.com/vant/lib/vant-css/index.css">
 	<!-- 引入组件 -->
 	<script src="https://unpkg.com/vue/dist/vue.min.js"></script>
-	<script src="https://unpkg.com/vant/lib/vant.min.js"></script> 
+	<script src="https://unpkg.com/vant/lib/vant.min.js"></script>
 	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 	<script src="https://cdn.bootcss.com/es6-promise/4.1.1/es6-promise.auto.js"></script>
 	<script src="${request.contextPath}/util/http.js"></script>
@@ -40,6 +41,8 @@
 			width: 100%;
 			line-height: 50px;
 			box-shadow: 0 0 20px 0 hsla(0, 0%, 7%, .1), 0 0 0 0 hsla(0, 0%, 7%, .1);
+			z-index: 9999;
+			background: #fff;
 		}
 
 		.txt {
@@ -61,25 +64,34 @@
 		img {
 			width: 100%;
 		}
-		.van-pull-refresh{
+
+		.van-pull-refresh {
 			overflow: auto !important;
 		}
 	</style>
 </head>
 
 <body>
-
 	<div id="app">
+		<div id="loading" :class="loadvisibility">
+			<div class="root">
+				<div class="loading">
+					<van-loading color="white" />
+				</div>
+				<div>数据加载中</div>
+			</div>
+		</div>
 		<van-pull-refresh v-model="isLoading" @refresh="onRefresh">
-			<van-list v-model="loading" :finished="finished" @load="onLoad" id="items" class="buttom row">
+			<van-list v-model="loading" :finished="finished" @load="onLoad" offset='50' id="items" class="buttom row">
 				<div class="item" v-for="item in list">
-					<img :src="item.resource.resourcePath" @load="checkHeight"/>
+					<img :src="'${request.contextPath}/'+item.resource.resourcePath" @load="checkHeight" />
 				</div>
 			</van-list>
 		</van-pull-refresh>
 		<div class="btn">
 			<van-row type="flex">
-				<van-col span="24" class="txt">共<b style="color: red;">{{number}}</b>条</van-col>
+				<van-col span="24" class="txt">共
+					<b style="color: red;">{{number}}</b>条</van-col>
 			</van-row>
 		</div>
 	</div>
@@ -93,11 +105,13 @@
 				finished: false,
 				number: 0,
 				page: 1,
-				colHeight:[0,0,0],
-				totalWidth:0,
-				isAjax:false
+				colHeight: [0, 0, 0],
+				totalWidth: 0,
+				isAjax: false,
+				loadvisibility: '',
+				count: 1
 			},
-			created:function(){
+			created: function () {
 				this.totalWidth = $(document).width();
 			},
 			methods: {
@@ -111,13 +125,14 @@
 						currentPage: context.page,
 						pagesize: 15,
 						activityId: '${activityId}',
-						enable:"true"
+						enable: "true"
 					}).then(function (response) {
 						var result = response.data;
 						context.loading = false;
 						context.isLoading = false;
 						context.isAjax = false;
 						context.list = result.content;
+						context.number = 0;
 						context.number = result.totalElements;
 						if (result.totalPages == context.page || result.totalPages == 0) {
 							context.finished = true;
@@ -130,29 +145,31 @@
 					if (context.isAjax) return;
 					if (context.finished) return;
 					context.isAjax = true;
+					context.loadvisibility = '';
 					axios.post("/ActivityResourceApi/queryLimit", {
 						currentPage: context.page,
 						pagesize: 15,
 						activityId: '${activityId}',
-						enable:"true"
+						enable: "true"
 					}).then(function (response) {
 						var result = response.data;
 						console.log(result)
 						context.loading = false;
 						context.isAjax = false;
 						context.list = context.list.concat(result.content);
-						context.number = result.totalElements;
+						context.number += result.totalElements;
 						if (result.totalPages == context.page || result.totalPages == 0) {
 							context.finished = true;
 						}
 						context.page += 1;
 					});
 				},
-				checkHeight:function(event){
+				checkHeight: function (event) {
 					console.log(event.target);
 					this.Calculation($(event.target));
 				},
 				Calculation: function (it) {
+					var context = this;
 					var totalWidth = this.totalWidth;
 					var eachWidth = it.width();
 					//计算出一行能排布几张图片
@@ -172,6 +189,9 @@
 
 					//让大盒子根据最高的列设置高度
 					$("#items").css("height", _.max(this.colHeight));
+					if (context.list.length == context.count++) {
+						context.loadvisibility = 'none'
+					}
 				}
 			}
 		})

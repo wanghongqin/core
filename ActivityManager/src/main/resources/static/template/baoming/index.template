@@ -1,0 +1,396 @@
+<script>
+			function getTextResponse(theurl) {
+				ajax.open("GET", theurl, false);
+				ajax.send();
+				if(ajax.readyState == 4 && ajax.status == 200) {　　
+					return true;
+				} else {
+					return false;
+				}
+			}
+
+			function InitAjax() {　
+				var ajax = false;　
+				try {　　 ajax = new ActiveXObject("Msxml2.XMLHTTP");　 } catch(e) {　　 try {　　　 ajax = new ActiveXObject("Microsoft.XMLHTTP");　　 } catch(E) {　　　 ajax = false;　　 }　 }　
+				if(!ajax && typeof XMLHttpRequest != 'undefined') {　　 ajax = new XMLHttpRequest();　 }　
+				return ajax;
+			}
+			var ajax = InitAjax();
+			var theurl = window.rootpath+"/baoming/";
+			var urls = [ "js/template-web.js", "js/swiper.min.js", "js/swiper.animate.min.js", "css/swiper.min.css", "css/animate.min.css"];
+			for(var i = 0; i < urls.length; i++) {
+				if(getTextResponse(theurl + urls[i])) {
+					loadJS(theurl + urls[i]);
+				} else {
+					loadJS(urls[i]);
+				}
+			}
+
+			function loadJS(url) {
+				var xmlHttp = null;
+				if(window.ActiveXObject) 
+				{
+					try {
+						
+						xmlHttp = new ActiveXObject("Msxml2.XMLHTTP");
+					} catch(e) {
+						
+						xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+					}
+				} else if(window.XMLHttpRequest) 
+				{
+					xmlHttp = new XMLHttpRequest();
+				}
+				
+				xmlHttp.open("GET", url, false);
+				
+				xmlHttp.send(null);
+				
+				if(xmlHttp.readyState == 4) {
+					
+					if((xmlHttp.status >= 200 && xmlHttp.status < 300) || xmlHttp.status == 0 || xmlHttp.status == 304) {
+						var myHead = document.getElementsByTagName("HEAD").item(0);
+						var url_copy = url;
+						var index = url_copy.lastIndexOf("\.");
+						url_copy = url_copy.substring(index + 1, url_copy.length);
+						if(url_copy == "js") {
+							var myScript = document.createElement("script");
+							myScript.language = "javascript";
+							myScript.type = "text/javascript";
+						} else if(url_copy == "css") {
+							var myScript = document.createElement("link");
+							myScript.rel = "stylesheet";
+							myScript.href = url;
+						}
+						try {
+							
+							myScript.appendChild(document.createTextNode(xmlHttp.responseText));
+						} catch(ex) {
+							myScript.text = xmlHttp.responseText;
+						}
+						myHead.appendChild(myScript);
+						return true;
+					} else {
+						return false;
+					}
+				} else {
+					return false;
+				}
+			}
+		</script>
+
+<style>
+			* {
+				margin: 0;
+				padding: 0;
+			}
+			
+			html,
+			body {
+				height: 100%;
+			}
+			
+			body {
+				font-family: "microsoft yahei";
+			}
+			
+			.swiper-container {
+				/*  width: 320px;
+    height: 480px;*/
+				width: 100%;
+				height: 100%;
+				background: #000;
+			}
+			
+			.swiper-slide {
+				width: 100%;
+				height: 100%;
+				background: url(/basisframework/template/baoming/img/background2.jpg) no-repeat left top;
+				background-size: 100% 100%;
+				z-index: 0;
+			}
+			
+			img {
+				display: block;
+			}
+			
+			.swiper-pagination-bullet {
+				width: 6px;
+				height: 6px;
+				background: #fff;
+				opacity: .4;
+			}
+			
+			.swiper-pagination-bullet-active {
+				opacity: 1;
+			}
+			
+			@-webkit-keyframes start {
+				0%,
+				30% {
+					opacity: 0;
+					-webkit-transform: translate(0, 10px);
+				}
+				60% {
+					opacity: 1;
+					-webkit-transform: translate(0, 0);
+				}
+				100% {
+					opacity: 0;
+					-webkit-transform: translate(0, -8px);
+				}
+			}
+			
+			@-moz-keyframes start {
+				0%,
+				30% {
+					opacity: 0;
+					-moz-transform: translate(0, 10px);
+				}
+				60% {
+					opacity: 1;
+					-moz-transform: translate(0, 0);
+				}
+				100% {
+					opacity: 0;
+					-moz-transform: translate(0, -8px);
+				}
+			}
+			
+			@keyframes start {
+				0%,
+				30% {
+					opacity: 0;
+					transform: translate(0, 10px);
+				}
+				60% {
+					opacity: 1;
+					transform: translate(0, 0);
+				}
+				100% {
+					opacity: 0;
+					transform: translate(0, -8px);
+				}
+			}
+			
+			.ani {
+				position: absolute;
+			}
+			
+			.txt {
+				position: absolute;
+			}
+			
+			#array {
+				position: absolute;
+				z-index: 999;
+				-webkit-animation: start 1.5s infinite ease-in-out;
+			}
+			
+			li {
+				list-style: none;
+			}
+			
+			input {
+				outline: none;
+				line-height: 2em;
+				border: 1px solid black;
+				width: 100%;
+				font-size: 5vw;
+			}
+		</style>
+		<script type="text/template" id="title">
+			<section class="swiper-slide swiper-slide1" style="position: relative;">
+				<div style="text-align: center; width: 100%;position: absolute;">
+					<img src="/basisframework/template/baoming/img/back2.gif" class="ani" swiper-animate-effect="bounceIn" style="width: 100%; z-index: 2; margin-top: 5%;" />
+				</div>
+				<div style="text-align: center; width: 90%;position: absolute; height: 80%;">
+					<img src="/basisframework/template/baoming/img/center2.png" class="ani" style="z-index: 3; width: 90%; margin-left: 10%; margin-top: 40%; height: 60%;" swiper-animate-duration="1.5s" swiper-animate-effect="zoomIn" />
+				</div>
+				<div style="position: absolute; width: 100%; margin-top: 92%; position: absolute; ">
+					<div style="margin-top: 18%; width: 80%;">
+						<span id="topic" style="color: inherit; font-family: fangzheng_htjt; background-color: initial; font-size: 5vw; font-weight: 600; width: 80%; text-align: center; margin-left: 10%;  display: inline-block;" swiper-animate-delay="1.0s" swiper-animate-effect="rotateIn" class="ani">{{value}}</span>
+					</div>
+				</div>
+				<div style="width: 100%; position: absolute; bottom: 0;">
+					<img src="/basisframework/template/baoming/img/bottom2.png" style="width: 100%;" />
+				</div>
+				<div style="width: 80%; position: absolute;">
+					<img src="/basisframework/template/baoming/img/flowerLeft2.png" style="z-index: 2; width: 80%;" swiper-animate-duration="1s" swiper-animate-effect="fadeInLeft" class="ani" />
+				</div>
+				<div style="bottom: -25px; width: 40%; position: absolute; margin-left: 5%;">
+					<img src="/basisframework/template/baoming/img/move2.png" style="z-index: 2; width: 80%; bottom: 0;" swiper-animate-duration="1s" swiper-animate-delay="1.5s" swiper-animate-effect="fadeInLeft" class="ani" />
+				</div>
+				<div style="bottom: 0; margin-left: 65%; width: 50%; position: absolute; height: 70%;">
+					<img src="/basisframework/template/baoming/img/flowerRight2.png" style="z-index: 2; width: 80%; bottom: 0; height: 40%;" swiper-animate-effect="fadeInRight" class="ani" />
+				</div>
+			</section>
+		</script>
+
+		<script type="text/html" id="paragraph1">
+			<section class="swiper-slide swiper-slide4">
+				<!--<div style="text-align: center; width: 100%;position: absolute;">
+					<img src="/basisframework/template/baoming/img/back2.gif" class="ani" swiper-animate-effect="bounceIn" style="width: 100%; z-index: 2; margin-top: 5%;" />
+				</div>-->
+				<div style="border: 3px solid black; width: 80%; height: 89%; position: absolute; z-index: 0; margin-top: 10%; margin-left: 10%; " swiper-animate-effect="zoomIn" class="ani">
+					<div style="width: 100%; margin-left: 34%; height: 10%; position: absolute; margin-top: 19%; z-index: 4;">
+						<span style="color: inherit; font-family: fangzheng_htjt; background-color: initial; font-size: 5vw; font-weight: 800; " swiper-animate-effect="fadeInLeft" swiper-animate-delay="0.8s" class="ani">活 动 介 绍</span>
+					</div>
+					<div style="margin-top: 16%; margin-left: 25%; width: 100%; position: absolute;">
+						<img src="/basisframework/template/baoming/img/title2.png" style="z-index: 2; width: 50%; z-index: 3;" swiper-animate-effect="zoomIn" class="ani" />
+					</div>
+					<div style="width: 80%; margin-top: 40%; margin-left: 10%; position: absolute; height: 29%;">
+						<span style="color: inherit; font-family: fangzheng_htjt; display: block; height: 100%; background-color: initial; height: 100%; font-size: 4vw; position: relative;" swiper-animate-effect="bounceInDown" class="ani">
+							{{@value}}
+						</span>
+					</div>
+				</div>
+				<div style="position: absolute; margin-top: 98%; z-index: 2; width: 100%;">
+					<img style="width: 98%;" src="/basisframework/template/baoming/img/medium.png" swiper-animate-effect="fadeInUp" class="ani" />
+				</div>
+				<div style="width: 100%; position: absolute; bottom: 0;">
+					<img src="/basisframework/template/baoming/img/bottom2.png" style="width: 100%;" />
+				</div>
+				<div style="width: 85%; position: absolute;">
+					<img src="/basisframework/template/baoming/img/flowerLeft2.png" style="z-index: 1; width: 80%;" swiper-animate-duration="1s" swiper-animate-effect="fadeInLeft" class="ani" />
+				</div>
+				<div style="bottom: -25px; width: 40%; position: absolute; margin-left: 5%;">
+					<img src="/basisframework/template/baoming/img/move2.png" style="z-index: 2; width: 80%; bottom: 0;" swiper-animate-duration="1s" swiper-animate-delay="1.5s" swiper-animate-effect="fadeInLeft" class="ani" />
+				</div>
+				<div style="bottom: 0; margin-left: 65%; width: 50%; position: absolute; height: 70%;">
+					<img src="/basisframework/template/baoming/img/flowerRight2.png" style="z-index: 2; width: 80%; bottom: 0; height: 40%;" swiper-animate-effect="fadeInRight" class="ani" />
+				</div>
+			</section>
+		</script>
+		<script type="text/html" id="paragraph2">
+			<section class="swiper-slide swiper-slide4">
+				<!--<div style="text-align: center; width: 100%;position: absolute;">
+					<img src="img/back2.gif" class="ani" swiper-animate-effect="bounceIn" style="width: 100%; z-index: 2; margin-top: 5%;" />
+				</div>-->
+				<div style="border: 3px solid black; width: 80%; height: 89%; position: absolute; z-index: 0; margin-top: 10%; margin-left: 8%; " swiper-animate-effect="zoomIn" class="ani">
+					<div style="width: 100%; margin-left: 34%; height: 10%; position: absolute; margin-top: 19%; z-index: 4;">
+						<span style="color: inherit; font-family: fangzheng_htjt; background-color: initial; font-size: 5vw; font-weight: 800; " swiper-animate-effect="fadeInLeft" swiper-animate-delay="0.8s" class="ani">活 动 详 情</span>
+					</div>
+					<div style="margin-top: 16%; margin-left: 25%; width: 100%; position: absolute;">
+						<img src="/basisframework/template/baoming/img/title2.png" style="z-index: 2; width: 50%; z-index: 3;" swiper-animate-effect="zoomIn" class="ani" />
+					</div>
+					<div style="width: 80%; position: absolute; margin-top: 50%; margin-left: 10%; z-index: 3;">
+						<span style="color: #ea3231; font-size: 5vw;">活动时间：</span>{{value}}
+						<br/><br/><span style="color: #ea3231; font-size: 5vw;">活动内容：</span><span id="event">{{value}}</span>
+					</div>
+				</div>
+				<div style="position: absolute; margin-top: 98%; z-index: 2; width: 100%;">
+					<img style="width: 98%;" src="/basisframework/template/baoming/img/medium.png" swiper-animate-effect="fadeInUp" class="ani" />
+				</div>
+				<div style="width: 100%; position: absolute; bottom: 0;">
+					<img src="/basisframework/template/baoming/img/bottom2.png" style="width: 100%;" />
+				</div>
+				<div style="width: 85%; position: absolute;">
+					<img src="/basisframework/template/baoming/img/flowerLeft2.png" style="z-index: 1; width: 80%;" swiper-animate-duration="1s" swiper-animate-effect="fadeInLeft" class="ani" />
+				</div>
+				<div style="bottom: -25px; width: 40%; position: absolute; margin-left: 5%;">
+					<img src="/basisframework/template/baoming/img/move2.png" style="z-index: 2; width: 80%; bottom: 0;" swiper-animate-duration="1s" swiper-animate-delay="1.5s" swiper-animate-effect="fadeInLeft" class="ani" />
+				</div>
+				<div style="bottom: 0; margin-left: 65%; width: 50%; position: absolute; height: 70%;">
+					<img src="/basisframework/template/baoming/img/flowerRight2.png" style="z-index: 2; width: 80%; bottom: 0; height: 40%;" swiper-animate-effect="fadeInRight" class="ani" />
+				</div>
+			</section>
+		</script>
+		<script type="text/html" id="img">
+			<section class="swiper-slide swiper-slide4 tesu">
+				<div style="text-align: center; width: 100%;position: absolute;">
+					<img src="/basisframework/template/baoming/img/back2.gif" style="width: 100%; margin-top: 5%;" />
+				</div>
+				<div style="width: 85%; position: absolute;">
+					<img src="/basisframework/template/baoming/img/flowerLeft2.png" style="z-index: 1; width: 80%;" swiper-animate-duration="1s" swiper-animate-effect="fadeInLeft" class="ani" />
+				</div>
+				<div style="border: 3px solid black; width: 80%; height: 89%; position: absolute; z-index: 0; margin-top: 10%; margin-left: 8%; " swiper-animate-effect="zoomIn" class="ani">
+					<div style="width: 100%; margin-left: 38%; height: 10%; position: absolute; margin-top: 19%; z-index: 4;">
+						<span style="color: inherit; font-family: fangzheng_htjt; background-color: initial; font-size: 5vw; font-weight: 800; " swiper-animate-effect="fadeInLeft" swiper-animate-delay="0.8s" class="ani">扫 一 扫</span>
+					</div>
+					<div style="margin-top: 16%; margin-left: 25%; width: 100%; position: absolute;">
+						<img src="/basisframework/template/baoming/img/title2.png" style="z-index: 2; width: 50%; z-index: 3;" swiper-animate-effect="zoomIn" class="ani" />
+					</div>
+				</div>
+				<div style="width: 100%; height: 45%; bottom: 0; position: absolute;">
+					<div style="width: 100%; position: absolute; bottom: 0;">
+						<img src="/basisframework/template/baoming/img/bottom2.png" style="width: 100%;" />
+					</div>
+				</div>
+				<div style="bottom: -25px; width: 40%; position: absolute; margin-left: 5%;">
+					<img src="/basisframework/template/baoming/img/move2.png" style="z-index: 2; width: 80%; bottom: 0;" swiper-animate-duration="1s" swiper-animate-delay="1.5s" swiper-animate-effect="fadeInLeft" class="ani" />
+				</div>
+				<div style="bottom: 0; margin-left: 65%; width: 50%; position: absolute; height: 70%;">
+					<img src="/basisframework/template/baoming/img/flowerRight2.png" style="z-index: 2; width: 80%; bottom: 0; height: 40%;" swiper-animate-effect="fadeInRight" class="ani" />
+				</div>
+				<div style="margin-top: 40%; width: 45%; margin-left: 26%; font-size: 4vw; font-weight: 800;"><span>长按下方二维码识别关注</span></div>
+				<div style="margin-left: 36%; width: 100%; margin-top: 5%; position: absolute;"><img id="first" src="{{value1}}" style="width: 25%;" swiper-animate-effect="zoomIn " class="ani " /></div>
+				<div style="margin-top: 36%; text-align: center; font-size: 4vw; font-weight: 800; position: relative;" swiper-animate-effect="fadeInUp" class="ani">
+					<span>长按下方二维码报名</span>
+				</div>
+				<div style="margin-left: 36%; width: 100%; margin-top: 4%; position: absolute;"><img id="second" src="{{value2}}" style="width: 25%;" swiper-animate-effect="zoomIn " class="ani " /></div>
+				<div style="margin-top: 28%; text-align: center; font-size: 4vw; font-weight: 800; position: relative;" swiper-animate-effect="fadeInUp" class="ani">
+					<span>名额有限，报满即止！</span>
+					<br/><br/><span>请勿重复提交</span>
+				</div>
+			</section>
+		</script> 
+
+		<script type="text/javascript">
+			var template_meta = {
+				title: ['title'],
+				paragraph: ['paragraph1', 'paragraph2'],
+				image: ['img']
+			};
+
+			(function(win) {
+
+				win.template_meta = {
+					title: ['title'],
+					paragraph: ['paragraph1', 'paragraph2'],
+					image: ['img']
+				};
+
+				win.template_meta.render = function(config) {
+					var html = '';
+					var count = {};
+					var paragraph_num = -1;
+					var arry;
+					config.resources.map(function(item, i) {
+						if(item.type == 'paragraph') {
+							paragraph_num++;
+						}
+						count[item.type] = (count[item.type] || 0) + 1;						
+						var t_list = template_meta[item.type];
+						if(count[item.type]>t_list.length){
+							count[item.type]=0;
+						}
+						if(item.type == 'paragraph') {
+							var tmp = t_list[paragraph_num];
+						} else {
+							var tmp = t_list[0];
+							if(item.type == 'image') {
+								var arr = item.value.split(",");
+								arry = { "value1": arr[0], "value2": arr[1] };
+								var h1 = template(tmp, arry);
+								html += h1;
+								html += '<img src="/basisframework/template/baoming/img/arrow.png" style="width: 20px;height: 15px;top: 460px;left: 150px;" id="array" class="resize">';
+								return html;
+							}
+						}
+						var h = template(tmp, item);
+						html += h;
+						html += '<img src="/basisframework/template/baoming/img/arrow.png" style="width: 20px;height: 15px;top: 460px;left: 150px;" id="array" class="resize">';
+					});
+					return html;
+				}
+			})(window);
+
+			
+
+			$(function() {
+ 
+			});
+
+			
+		</script>

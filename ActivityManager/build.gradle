@@ -1,5 +1,4 @@
-group 'org.baseframework'
-version '1.0-SNAPSHOT'
+
 buildscript {
     ext {
         springBootVersion = '2.0.4.RELEASE'
@@ -30,6 +29,8 @@ ext {
     springCloudVersion = 'Finchley.SR1'
 }
 
+group 'org.baseframework'
+version '1.0-SNAPSHOT'
 jar{
     baseName='activitymanager'
     version='1.0.0'
@@ -52,7 +53,8 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-test')
     compile group: 'com.google.zxing', name: 'core', version: '3.3.3'
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
-    compile group: 'com.bitnum.cloud', name: 'community-common', version: '1.0'
+    compile group: 'com.bitnum.cloud', name: 'community-common', version: '1.1'
+    compile group: 'com.github.binarywang', name: 'weixin-java-mp', version: '3.1.0'
     compile project (":baseconfig")
 
 }

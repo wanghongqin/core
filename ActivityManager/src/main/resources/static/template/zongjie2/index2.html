@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" id="viewport" content="width=320, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<title></title>
+		<script>
+			function getTextResponse(theurl) {
+				//var ajax = InitAjax();
+				ajax.open("GET", theurl, false);
+				ajax.send();
+				if(ajax.readyState == 4 && ajax.status == 200) {　　
+					return true;
+				} else {
+					return false;
+				}
+			}
+
+			function InitAjax() {　
+				var ajax = false;　
+				try {　　 ajax = new ActiveXObject("Msxml2.XMLHTTP");　 } catch(e) {　　 try {　　　 ajax = new ActiveXObject("Microsoft.XMLHTTP");　　 } catch(E) {　　　 ajax = false;　　 }　 }　
+				if(!ajax && typeof XMLHttpRequest != 'undefined') {　　 ajax = new XMLHttpRequest();　 }　
+				return ajax;
+			}
+			var ajax = InitAjax();
+			var theurl = "http://127.0.0.1:8020/template/";
+			var urls = ["js/jquery-2.1.0.js", "js/template-web.js"];
+			for(var i = 0; i < urls.length; i++) {
+				if(getTextResponse(theurl + urls[i])) {
+					//          		alert(getTextResponse(theurl+urls[i]));
+					loadJS(theurl + urls[i]);
+				} else {
+					loadJS(urls[i]);
+				}
+			}
+
+			function loadJS(url) {
+				var xmlHttp = null;
+				if(window.ActiveXObject) //IE
+				{
+					try {
+						//IE6以及以后版本中可以使用
+						xmlHttp = new ActiveXObject("Msxml2.XMLHTTP");
+					} catch(e) {
+						//IE5.5以及以后版本可以使用
+						xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+					}
+				} else if(window.XMLHttpRequest) //Firefox，Opera 8.0+，Safari，Chrome
+				{
+					xmlHttp = new XMLHttpRequest();
+				}
+				//采用同步加载
+				xmlHttp.open("GET", url, false);
+				//发送同步请求，如果浏览器为Chrome或Opera，必须发布后才能运行，不然会报错
+				xmlHttp.send(null);
+				//4代表数据发送完毕
+				if(xmlHttp.readyState == 4) {
+					//0为访问的本地，200到300代表访问服务器成功，304代表没做修改访问的是缓存
+					if((xmlHttp.status >= 200 && xmlHttp.status < 300) || xmlHttp.status == 0 || xmlHttp.status == 304) {
+						var myHead = document.getElementsByTagName("HEAD").item(0);
+						var url_copy = url;
+						var index = url_copy.lastIndexOf("\.");
+						url_copy = url_copy.substring(index + 1, url_copy.length);
+						if(url_copy == "js") {
+							var myScript = document.createElement("script");
+							myScript.language = "javascript";
+							myScript.type = "text/javascript";
+						} else if(url_copy == "css") {
+							var myScript = document.createElement("link");
+							myScript.rel = "stylesheet";
+							myScript.href = url;
+						}
+						try {
+							//IE8以及以下不支持这种方式，需要通过text属性来设置
+							myScript.appendChild(document.createTextNode(xmlHttp.responseText));
+						} catch(ex) {
+							myScript.text = xmlHttp.responseText;
+						}
+						myHead.appendChild(myScript);
+						return true;
+					} else {
+						return false;
+					}
+				} else {
+					return false;
+				}
+			}
+		</script>
+		<script type="text/template" id="title">
+			<section style="font-family: Arial; border: 0px none; padding: 0px; color: #319369; margin-top: 6%;">
+				<section style="-webkit-box-reflect:below 0px -webkit-gradient(linear, 0% 0%, 0% 100%, from(transparent), color-stop(0.2, transparent), to(rgba(250, 250, 250, 0.3))); margin-top:15px;line-height:20px;">
+					<p style="display: block; -webkit-margin-before: 1em; -webkit-margin-after: 1em; -webkit-margin-start: 0px; -webkit-margin-end: 0px; text-align: center;  "><span style="font-family:微软雅黑; font-size:25px"><strong style="font-size:25px">{{@value}}</strong></span></p>
+				</section>
+			</section>
+		</script>
+
+		<script type="text/template" id="title2">
+			<section style="margin-top: 6%;">
+				<section style="margin:10px auto;display: flex;justify-content: center;align-items: center;">
+					<section style="width:50px;margin-left: -11px;"><img src="img/trunk2.png" style="max-width:100%;margin:0px auto;vertical-align: bottom;"></section>
+					<p style="margin: 0px 15px;font-size: 22px;color: #835656;line-height: 1.5;font-weight: 600;">{{@value}}</p>
+					<section style="width: 20px;"><img src="img/grass2.png" style="max-width:100%;margin:0px auto;vertical-align: bottom;"></section>
+				</section>
+			</section>
+		</script>
+
+		<script type="text/template" id="title3">
+			<div style="margin-top: 4%; width: 100%;"><img style="width: 100%;" src="img/leaf.gif" /></div>
+			<section style="margin-top: 4%;display: flex;align-items: center;"><span style="width: 8px;height: 8px;display: block;background-color: #ccc992;border-radius:50%;margin-right: 10px;"></span><span style="width: 12px;height: 12px;display: block;background-color: #ccc992;border-radius:50%;margin-right: 10px;"></span><span style="width: 16px;height: 16px;display: block;background-color: #78992b;border-radius:50%;margin-right: 10px;"></span>
+				<p style="margin: 0px 15px;font-size: 22px;color: #835656;line-height: 1.5;font-weight: 600;">{{@value}}</p>
+			</section>
+		</script>
+
+		<script type="text/template" id="paragraph">
+			<section>
+				<section style="margin: 10px auto;">
+					<section style="display: flex;justify-content: center;align-items: center;transform: rotate(0deg);margin-bottom: -9px;">
+						<section style="display: flex;justify-content: center;align-items: center;padding: 0px 10px;background-color: #fff;"><span style="width: 8px;height: 8px;display: block;background-color: #ccc992;border-radius:50%;margin-right: 10px;"></span><span style="width: 12px;height: 12px;display: block;background-color: #ccc992;border-radius:50%;margin-right: 10px;"></span><span style="width: 16px;height: 16px;display: block;background-color: #78992b;border-radius:50%;margin-right: 10px;"></span><span style="width: 16px;height: 16px;display: block;background-color: #78992b;border-radius:50%;margin-left: 10px;"></span><span style="width: 12px;height: 12px;display: block;background-color: #ccc992;border-radius:50%;margin-left: 10px;"></span><span style="width: 8px;height: 8px;display: block;background-color: #ccc992;border-radius:50%;margin-left: 10px;"></span></section>
+					</section>
+					<section style="border: 2px solid #cec365;padding: 20px;">
+						<p style="margin: 0px;font-size: 15px;line-height: 1.5;color: #6f6f6f;">{{@value}}</p>
+					</section>
+				</section>
+			</section>
+		</script>
+		<script type="text/template" id="paragraph2">
+			<section style="margin: 10px auto;display: flex;align-items: center; margin-top: 6%;">
+				<section style="width: 80px;transform: rotate(0deg);margin-right: -30px;"><img src="img/leaf_left2.png" style="max-width:100%;margin:0px auto;"></section>
+				<section style="flex:1;border: 2px solid #b09a72;padding: 20px;padding-left: 40px;">
+					<p style="margin: 0px;font-size: 15px;line-height: 1.5;color: #6f6f6f;">{{@value}}</p>
+				</section>
+			</section>
+		</script>
+
+		<script type="text/template" id="paragraph3">
+			<section style="">
+				<section style="display: flex;flex-direction: column;align-items: flex-end;">
+					<section style="align-self: flex-start;width: 240px;margin-bottom: -90px;"><img src="img/leaves2.png" style="max-width:100%;vertical-align:bottom;margin: 0px auto;" _src="http://editor-material.oss-cn-beijing.aliyuncs.com/style/20180730/1532919946/%E6%AD%A3%E6%96%87%E7%B4%A0%E6%9D%90%2C%E7%AE%80%E7%BA%A6%2C%E5%BC%95%E7%94%A8_0_12553.png"></section>
+					<section style="width:100%;padding-left:30px;">
+						<section style="padding: 30px;border: 2px solid #1b1b1b;border-radius: 15px;">
+							<p style="margin: 0px;font-size: 15px;line-height: 1.5;color:#333;">{{@value}}</p>
+						</section>
+					</section>
+				</section>
+			</section>
+		</script>
+
+		<script type="text/template" id="img">
+			<section style="margin-top: 10%;">
+				<section style="margin:10px auto;text-align:center;"><img src="img/leaf2.png" style="max-width:100%;margin:0px auto;"></section>
+				<section style="margin: 10px auto; width: 80%;">
+					<section style="border: 2px solid #cec365;padding: 20px;">
+						<section style="margin: 0px auto;text-align: center;">
+							<img src="{{@value}}" style="max-width:100%;margin:0px auto;" class="KolImg">
+						</section>
+					</section>
+					<section style="display: flex;justify-content: center;align-items: center;transform: rotate(0deg);margin-top: -9px;">
+						<section style="display: flex;justify-content: center;align-items: center;padding: 0px 10px;background-color: #fff;"><span style="width: 8px;height: 8px;display: block;background-color: #ccc992;border-radius:50%;margin-right: 10px;"></span><span style="width: 12px;height: 12px;display: block;background-color: #ccc992;border-radius:50%;margin-right: 10px;"></span><span style="width: 16px;height: 16px;display: block;background-color: #78992b;border-radius:50%;margin-right: 10px;"></span><span style="width: 16px;height: 16px;display: block;background-color: #78992b;border-radius:50%;margin-left: 10px;"></span><span style="width: 12px;height: 12px;display: block;background-color: #ccc992;border-radius:50%;margin-left: 10px;"></span><span style="width: 8px;height: 8px;display: block;background-color: #ccc992;border-radius:50%;margin-left: 10px;"></span></section>
+					</section>
+				</section>
+			</section>
+		</script>
+
+		<script type="text/template" id="img2">
+			<section style="margin-top: 5%;">
+				<section style="margin: 0px auto;text-align: center;">
+					<div style="padding-left: 20px; padding-right: 20px;">
+						<img src="{{@value}}" style="max-width:100%;margin:0px auto;" class="KolImg" _src="http://kol-statics.oss-cn-beijing.aliyuncs.com/editor/184908ad3fff703f2ebd77fa62a3bce8eef1ed.png">
+					</div>
+				</section>
+			</section>
+		</script>
+
+		<script type="text/template" id="img3">
+			<section style="margin-top: 5%;">
+				<section style="margin: 0px auto;text-align: center;">
+					<div style="padding-left: 20px; padding-right: 20px;">
+						<img src="{{@value}}" style="max-width:100%;margin:0px auto;" class="KolImg" _src="http://kol-statics.oss-cn-beijing.aliyuncs.com/editor/184908ad3fff703f2ebd77fa62a3bce8eef1ed.png">
+					</div>
+				</section>
+			</section>
+		</script>
+
+		<!--	<script src="js/jquery-2.1.0.js" type="text/javascript" charset="utf-8"></script>-->
+		<!--		<script src="js/template-web.js" type="text/javascript" charset="utf-8"></script>-->
+
+		<script type="text/javascript">
+			var template_meta = {
+				title: ['title', 'title2', 'title3'],
+				paragraph: ['paragraph', 'paragraph2', 'paragraph3'],
+				image: ['img', 'img2', 'img3']
+			};
+
+			(function(win) {
+				win.template_meta = {
+					title: ['title', 'title2', 'title3'],
+					paragraph: ['paragraph', 'paragraph2', 'paragraph3'],
+					image: ['img', 'img2', 'img3']
+				};
+
+				win.template_meta.render = function(config) {
+					var html = "";
+					var count = {};
+					var title_num = -1;
+					var image_num = 0;
+					config.resources.map(function(item, i) {
+						if(item.type == 'title') {
+							if(title_num == (template_meta[item.type].length - 1)) {
+								title_num = 0;
+							} else {
+								title_num++;
+							}
+						}
+						count[item.type] = (count[item.type] || 0) + 1;
+						var t_list = template_meta[item.type];
+						if(item.type == 'paragraph' || item.type == 'title') {
+							var tmp = t_list[title_num];
+						} else if(item.type == 'image') {
+							//							console.log(title_num);
+							image_num = title_num;
+							if(image_num == -1) //title个数必须和image个数一致
+							{
+								image_num++;
+								var tmp = t_list[image_num];
+							} else {
+								var tmp = t_list[image_num];
+							}
+						}
+						var h = template(tmp, item);
+						html += h;
+					});
+					return html;
+				}
+
+			})(window);
+
+			var config = window.config||{
+				title: "哈哈哈测试",
+				resources: [
+				]
+			};
+
+			$(function() {
+				var render = window.template_meta.render || function(config) {
+
+					var html = "";
+					var count = {};
+					config.resources.map(function(item, i) {
+
+						count[item.type] = (count[item.type] || 0) + 1;
+
+						var t_list = template_meta[item.type];
+
+						var tmp = t_list[0];
+						var h = template(tmp, item);
+						html += h;
+					});
+					return html;
+				}
+
+				$("#main").html(render(config));
+			});
+		</script>
+	</head>
+
+	<body>
+		<section class="KolEditor" style="margin-top:20px;"><img src="img/follow.gif" style="width: 100%; max-width: 100%;" title="" alt="" border="" height="" width="" _src="http://editor-material.oss-cn-beijing.aliyuncs.com/style/20180730/1532920162/%E4%B8%8A%E5%85%B3%E6%B3%A8_0_531.gif">​</section>
+		<!--<section class="KolEditor" style="undefined"><section style="display:flex;align-items:center;justify-content:center;margin:10px auto;"><section style="max-width:220px !important;"><img src="http://kol-statics.oss-cn-beijing.aliyuncs.com/editor/170604202822321059d1b07f2c8dc2cceca080.png" style="max-width:100%;margin:0px auto;" _src="http://kol-statics.oss-cn-beijing.aliyuncs.com/editor/170604202822321059d1b07f2c8dc2cceca080.png"></section></section></section>-->
+		<div id="main">
+
+		</div>
+		<section style="margin:10px auto; margin-bottom: 10%; margin-top:5%; text-align:center;"><img src="img/follow2.png" style="max-width:100%;margin:0px auto;" class="KolImg"></section>
+	</body>
+
+</html>

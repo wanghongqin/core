@@ -8,6 +8,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	<title>资源上传</title>
 	<!-- 引入样式 -->
+	<link rel="stylesheet" href="${request.contextPath}/css/loading.css">
 	<link rel="stylesheet" href="https://unpkg.com/vant/lib/vant-css/index.css">
 	<!-- 引入组件 -->
 	<script src="https://unpkg.com/vue/dist/vue.min.js"></script>
@@ -17,6 +18,7 @@
 	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 	<script src="https://cdn.bootcss.com/es6-promise/4.1.1/es6-promise.auto.js"></script>
 	<script src="${request.contextPath}/util/http.js"></script>
+	<script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
 	<style type="text/css">
 		#app {
 			position: absolute;
@@ -25,17 +27,19 @@
 		}
 
 		.row {
-			padding: 5px 0px;
+			margin: 5px 0px;
+			margin-left: 2%;
 		}
+
 		.images {
-			width: 98.8%;
-			padding-left: 1%;
+			width: 100%;
+			margin-left: 1%;
 		}
 
 		.images img {
-			width: 31%;
+			width: 30%;
 			float: left;
-			padding: 1%;
+			margin: 2% 3% 1% 0;
 		}
 
 		.cell {
@@ -45,20 +49,71 @@
 		.clear {
 			clear: both;
 		}
-		.btn{
-			padding: 5px 20px;
+
+		.btn {
+			position: fixed;
+			bottom: 0px;
+			height: 50px;
+			width: 100%;
+			line-height: 50px;
+			box-shadow: 0 0 20px 0 hsla(0, 0%, 7%, .1), 0 0 0 0 hsla(0, 0%, 7%, .1);
+			z-index: 9999;
+			background: #fff;
 		}
-		.van-button--bottom-action {
-			margin-top: 10px;
+
+		.bottom {
+			margin-bottom: 60px;
+		}
+
+		.van-button--default {
 			color: #fff !important;
-			background-color: #4b0 !important;
-			border: 1px solid #4b0 !important;
+			background-color: #2d8cf0 !important;
+			border-color: #2d8cf0 !important;
+			left: 15px;
+		}
+
+		.van-button--primary {
+			right: 15px;
+		}
+
+		.van-button {
+			position: absolute;
+			top: 10px;
+		}
+
+		.none {
+			display: none;
+		}
+
+		#loading {
+			position: fixed;
+			height: 100%;
+			width: 100%;
+			z-index: 99999;
+			background: rgba(0, 0, 0, .5);
+		}
+
+		.van-loading--spinner {
+			margin: 50% auto;
+		}
+
+		.van-toast--default {
+			width: auto !important;
 		}
 	</style>
 </head>
 
 <body>
 	<div id="app">
+		<div id="loading" :class="loadvisibility">
+			<div class="root">
+				<div class="loading">
+					<van-loading color="white" />
+				</div>
+				<div>{{message}}</div>
+			</div>
+		</div>
+
 		<div class="row">
 			<div class="images">
 				<img v-for="img in imageList" :src="img">
@@ -66,7 +121,7 @@
 			<div class="clear">
 			</div>
 		</div>
-		<div class="row">
+		<div :class="className">
 			<van-cell-group class="cell">
 				<van-field v-model="resource.resourceTag" label="资源标签" placeholder="请输入资源标签" />
 			</van-cell-group>
@@ -78,32 +133,128 @@
 			</van-cell-group>
 		</div>
 		<div class="btn">
-			<van-button type="default" bottom-action>提交</van-button>
+			<van-button type="default" size="small" @click="select" :disabled='disabled'>选择图片</van-button>
+			<van-button type="primary" size="small" @click="upload" :loading='btnload' :disabled='disabled'>上传</van-button>
 		</div>
 	</div>
 	<script type="text/javascript">
 		new Vue({
 			el: "#app",
 			data: {
-				imageList: [
-					'http://www.w3school.com.cn/i/eg_tulip.jpg',
-					'http://www.w3school.com.cn/i/eg_tulip.jpg',
-					'http://www.w3school.com.cn/i/eg_tulip.jpg',
-					'http://www.w3school.com.cn/i/eg_tulip.jpg',
-					'http://www.w3school.com.cn/i/eg_tulip.jpg',
-					'http://www.w3school.com.cn/i/eg_tulip.jpg'
-				],
+				className: 'none',
+				loadvisibility: 'none',
+				imageList: [],
+				disabled: false,
+				serverIds: [],
+				btnload: false,
+				imageIds: [],
+				message:'数据加载中',
 				resource: {
-					resourceContent: '',
-					resourceType: '',
-					ownerId: '',
 					resourceTag: '',
 					resourceGroup: '',
 					remark: ''
 				}
 			},
+			beforeCreate: function () {
+				var context = this;
+				//初始化微信权限
+				wx.config({
+					debug: false,
+					appId: '${appId}',
+					timestamp: '${timestamp}',
+					nonceStr: '${nonceStr}',
+					signature: '${signature}',
+					jsApiList: [
+						'chooseImage',
+						'uploadImage'
+					]
+				});
+				wx.ready(function () {
+					context.disabled = false;
+				});
+				wx.error(function (res) {
+					context.$toast.fail("权限申请失败，请重试");
+				});
+			},
 			methods: {
-				
+				select: function () {
+					var context = this;
+					wx.chooseImage({
+						sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+						sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+						count: 6, // 最多能选择多少张图片，默认9
+						success: function (res) {
+							context.loadvisibility = '';
+							context.btnload = true;
+							var localIds = res.localIds;
+							if (context.imageList.length + localIds.length > 6) {
+								context.$toast.fail("最多只能上传六个资源");
+								context.btnload = false;
+								context.loadvisibility = 'none';
+								return;
+							}
+							//跳转到另外页面 
+							for (var i = 0; i < localIds.length; i++) {
+								var localId = localIds[i];
+								context.imageList.push(localId)
+								context.imageIds.push(localId);
+							}
+							context.uploadToServer(context.imageIds);
+							context.className = "row bottom";
+
+						}
+					});
+				},
+				uploadToServer: function (localIds) {
+					var context = this;
+					var localId = localIds.pop();
+					wx.uploadImage({
+						localId: localId,
+						isShowProgressTips: 0,
+						success: function (res) {
+							var serverId = res.serverId; // 返回图片的服务器端ID 
+							context.serverIds.push(serverId);
+							if (localIds.length > 0) {
+								context.uploadToServer(localIds);
+							}
+							if (context.serverIds.length == context.imageList.length) {
+								context.btnload = false;
+								context.loadvisibility = 'none';
+							}
+						}
+					});
+				},
+				upload: function () {
+					var context = this;
+					context.message='资源上传中'
+					context.loadvisibility = '';
+					var serverIds = this.serverIds.join(",");
+					axios.post("/ResourceApi/upload", {
+						serverIds: serverIds,
+						activityId: '${activityId}',
+						ownerId: '${ownerId}',
+						resourceTag: context.resource.resourceTag,
+						resourceGroup: context.resource.resourceGroup,
+						remark: context.resource.remark
+					}).then(function (response) {
+						var result = response.data;
+						console.log(result);
+						context.loadvisibility = 'none';
+						if (result.resultType) {
+							context.$toast.success(result.message);
+							setTimeout(function () {
+								window.history.back();
+								//window.location.href = "${request.contextPath}/MobileActivity/Index"
+							}, 3000);
+						} else {
+							context.$toast.fail(result.message);
+						}
+					}).catch(function (err) {
+						context.loadvisibility = 'none';
+						context.$toast.fail("网络错误，请重试");
+					})
+
+				}
 			}
 		})
 	</script>

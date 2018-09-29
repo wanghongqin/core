@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" id="viewport" content="width=320, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<script src="./js/jquery-2.0.2.min.js"></script>
+		<script src="./js/template-web.js"></script>
+		<script type="text/template" id="title">
+			<section>
+				<section style="display: flex;justify-content: center;align-items: center;">
+					<section style="width: 40px;transform: rotate(0deg);margin-right: -25px;">​<img src="img4/title_left4.png" style="max-width:100%;margin:0px auto;vertical-align: bottom;"></section>
+					<section style="border:2px dashed #ffecd0;height: 40px;display: flex;align-items: center;padding:0px 15px 0px 25px;">
+						<p style="margin: 0px;color: #f8b551;font-weight: 600;font-size: 18px;">{{value}}</p>
+					</section>
+					<section style="width: 12px;margin-left: -8px;"><img src="img4/title_right4.png" style="max-width:100%;margin:0px auto;vertical-align: bottom;"></section>
+				</section>
+			</section>
+		</script>
+
+		<script type="text/template" id="title2">
+			<section>
+				<section style="margin: 5% auto;display: flex;justify-content: center;align-items:flex-end;box-sizing: border-box;">
+					<section style="width: 25px;flex-shrink: 0;height:44px;"><img src="img4/left4.png" style="max-width: 100%;"></section>
+					<section style="background-image:url(img4/medium4.png);background-position:center;background-repeat: repeat-x;background-size: auto 100%;padding: 5px 15px;text-align: center;height:34px;overflow: hidden;">
+						<p style="margin: 0;font-size: 16px;line-height:31px;color: #fff;">{{value}}</p>
+					</section>
+					<section style="width:25px;flex-shrink: 0;height:44px;"><img src="img4/right4.png" style="max-width: 100%;"></section>
+				</section>
+			</section>
+		</script>
+
+		<script type="text/template" id="title3">
+			<section>
+				<section style="margin:10px auto;text-align:center;">
+					<section style="background-image:url(img4/starts4.png);height:50px;padding:0px 5px;background-size:auto 100%;background-position:center;background-repeat:no-repeat;">
+						<section style="display: flex;align-items: center;justify-content: center;">
+							<section style="border: 2px dashed #ffecd0;height: 40px;display: flex;align-items: center;padding-right: 15px;">
+								<section style="width:40px;"><img src="img4/third4.png" style="max-width:100%;margin:0px auto;vertical-align: bottom;"></section>
+								<p style="margin: 0px;color: #f8b551;font-weight: 600;font-size: 18px;flex: 1;">{{value}}</p>
+							</section>
+						</section>
+					</section>
+				</section>
+			</section>
+		</script>
+
+		<script type="text/template" id="paragraph">
+			<section style="margin: 10px auto;width:275px;"><img src="img4/split4.png" style="max-width: 100%;" class="KolImg" _src="http://editor-material.oss-cn-beijing.aliyuncs.com/style/20180731/1533015210/%E6%96%B0%E5%A2%9E%E7%B4%A0%E6%9D%90_0.png">​</section>
+			<section style="width:100%; box-sizing: border-box;display: flex;justify-content: center;align-items: center;">
+				<section style="width: 89px;flex-shrink: 0;align-self: flex-end;margin-right: -75px;margin-bottom: -15px;z-index: 3;"><img src="img4/flower_left4.png" style="max-width: 100%;"></section>
+				<section style="display: flex;width:100%; align-items:flex-end;flex-direction: column;justify-content: center;border: 2px solid #9dd4e0;text-indent:2em;padding:45px 30px 32px 30px;">
+					<p style="margin: 0;font-size:15px;line-height:1.5;color:#42445d; width: 100%;">{{value}}</p>
+				</section>
+				<section style="flex-shrink: 0;width: 45px;align-self: flex-start;margin-left: -30px;margin-top: -15px;z-index: 3;"><img src="img4/flower_right4.png" style="max-width: 100%;"></section>
+			</section>
+		</script>
+		<script type="text/template" id="paragraph2">
+			<section>
+				<section style="display: flex;align-items: flex-start;flex-direction: column; width: 100%;">
+					<section style="transform: rotate(0deg);background-color: #fff;padding: 0px 10px;width: 80px;box-sizing: border-box;" class=""><img src="img4/up4.png" style="max-width:100%;margin:0px auto;"></section>
+					<section style="margin: -20px 20px;border:2px solid #97a9c0;background-image:url(img4/background4.png);background-size: cover;padding: 15px; width: 80%;">
+						<section style="border:2px solid #97a9c0;padding: 20px;">
+							<p style="margin: 0px;font-size: 15px;line-height: 1.5;color: #33475f;">{{value}}</p>
+						</section>
+					</section>
+					<section style="align-self: flex-end;width: 140px;box-sizing: border-box;margin-top: -32px;" class=""><img src="img4/down4.png" style="max-width:100%;margin:0px auto;"></section>
+				</section>
+			</section>
+		</script>
+
+		<script type="text/template" id="paragraph3">
+			<section>
+				<section style="margin-top: 0.5em; margin-bottom: 0.5em; position: static;">
+					<section style="border-top: 3px dashed rgb(147, 122, 122);" class=""></section>
+				</section>
+				<section class="" style="margin: 20px 0%; position: static;">
+					<section data-style="font-size: 15px; color: rgb(120, 114, 114); line-height: 1.8;" style="font-size: 15px; color: rgb(120, 114, 114); line-height: 1.8;">
+						<p style="font-size: 15px; color: rgb(120, 114, 114); line-height: 1.8;">{{value}}</p>
+					</section>
+				</section>
+				<section class="" style="margin-top: 0.5em; margin-bottom: 0.5em; position: static;">
+					<section style="border-top: 5px dashed rgb(147, 122, 122);" class=""></section>
+				</section>
+			</section>
+		</script>
+
+		<script type="text/template" id="img">
+			<section class="KolEditor" style="width: 94%; margin-left: 3%;">
+				<section style="display:inline-block;margin:0px auto;margin:10px;text-align:center;box-shadow:2px 2px 10px rgba(0,0,0,0.5);border-radius:4px;overflow:hidden;"><img src="{{value}}" style="max-width:100%;vertical-align:bottom;" class="KolImg" _src="http://editor-material.oss-cn-beijing.aliyuncs.com/style/20180730/1532919961/%E7%B4%A0%E8%89%B2%2C%E5%8D%95%E5%9B%BE_0_12078.jpeg"></section>
+			</section>
+		</script>
+
+		<script type="text/template" id="img2">
+			<section style="margin: 0px auto;text-align: center;">
+				<section style="display: inline-block;border:2px solid #f1f1f1;border-radius: 5px 15px 5px 5px;margin: 0px 15px 20px 20px;background-color: rgb(254,254,254);">
+					<section style="display: inline-block;border:2px solid #f1f1f1;border-radius: 5px 15px 5px 5px;box-sizing: border-box;transform: translate(-5px,5px);background-color: rgb(255,255,255);">
+						<section style="display: inline-block;border:2px solid #f1f1f1;border-radius: 5px 15px 5px 5px;padding:8px;box-sizing: border-box;transform: translate(-5px,5px);background-color:rgb(254,254,254);"><img src="{{value}}" style="max-width: 100%;border-radius: 5px 15px 5px 5px;vertical-align: middle;"></section>
+					</section>
+				</section>
+			</section>
+		</script>
+
+		<script type="text/template" id="img3">
+			<section style="width: 80%; margin-left: 10%;">
+				<img src="{{value}}" style="border-radius: 50%;width:100%;vertical-align:top;">
+			</section>
+		</script>
+
+		<script type="text/javascript">
+			var template_meta = {
+				title: ['title', 'title2', 'title3'],
+				paragraph: ['paragraph', 'paragraph2', 'paragraph3'],
+				image: ['img', 'img2', 'img3']
+			};
+
+			(function(win) {
+
+				win.template_meta = {
+					title: ['title', 'title2', 'title3'],
+					paragraph: ['paragraph', 'paragraph2', 'paragraph3'],
+					image: ['img', 'img2', 'img3']
+				};
+
+				win.template_meta.render = function(config) {
+					var html = "";
+					var count = {};
+					var title_num = -1;
+					var image_num = 0;
+					config.resources.map(function(item, i) {
+						count[item.type] = (count[item.type] || 0) + 1;
+						var t_list = template_meta[item.type];
+						if(item.type == 'title') {
+							if(title_num == (template_meta[item.type].length - 1)) {
+								title_num = 0;
+								var tmp = t_list[title_num];
+							} else {
+								title_num++;
+								var tmp = t_list[title_num];
+							}
+						} else if(item.type == 'image' || item.type == 'paragraph') {
+							//							console.log(title_num);
+							image_num = title_num;
+							if(image_num == -1) //title个数必须和image个数一致
+							{
+								image_num++;
+								var tmp = t_list[image_num];
+							} else {
+								var tmp = t_list[image_num];
+							}
+						}
+						var h = template(tmp, item);
+						html += h;
+					});
+					return html;
+				}
+
+			})(window);
+
+			var config = {
+				title: "哈哈哈测试",
+				resources: [
+				]
+			};
+
+			$(function() {
+
+				var render = window.template_meta.render || function(config) {
+
+					var html = "";
+					var count = {};
+					config.resources.map(function(item, i) {
+
+						count[item.type] = (count[item.type] || 0) + 1;
+
+						var t_list = template_meta[item.type];
+
+						var tmp = t_list[0];
+						var h = template(tmp, item);
+						html += h;
+					});
+					return html;
+				}
+
+				$("#main").html(render(config));
+			});
+		</script>
+	</head>
+
+	<body>
+		<section style="100%">​<img style="width: 100%;" src="img4/follow.gif"></section>
+		<div id="main"></div>
+		<section style="margin-top: 5%; margin-bottom: 8%;">
+			<section style="margin: 10px auto;width:65px;"><img src="img4/end_flower4.png" style="max-width: 100%;"></section>
+		</section>
+	</body>
+
+</html>

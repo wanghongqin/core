@@ -1,14 +1,14 @@
 server:
     port: 10189
     servlet:
-        context-path: /ActivityManager
+        context-path: /
     session:
         cookie:
           name: OAUTH2SESSION
 datasource:
-    url: jdbc:mysql://localhost:3306/db_activity?characterEncoding=utf8
+    url: jdbc:mysql://192.168.1.167:3306/db_newactivity?characterEncoding=utf8
     username: root
-    password: 
+    password: 123456
     driverClassName: com.mysql.jdbc.Driver
 jpaproperties:
     show_sql: true
@@ -22,12 +22,12 @@ security:
     enabled: false
   oauth2:
     client:
-      clientId: bd1c0a783ccdd1c9b9e4
-      clientSecret: 1a9030fbca47a5b2c28e92f19050bb77824b5ad1
-      accessTokenUri: http://192.168.1.48:10184/oatuhserver/oauth/token
-      userAuthorizationUri: http://192.168.1.48:10184/oatuhserver/oauth/authorize
+      clientId: wx046f2c7810964e1a
+      clientSecret: 123456
+      accessTokenUri: http://open.ngork.guomer.cn/oauth/token
+      userAuthorizationUri: http://open.ngork.guomer.cn/oauth/authorize
     resource:
-      userInfoUri: http://192.168.1.48:10184/oatuhserver/user/info
+      userInfoUri: http://open.ngork.guomer.cn/api/user
 spring:
   freemarker:
     request-context-attribute: request  #req访问request
@@ -39,5 +39,16 @@ spring:
     charset: UTF-8 #编码格式
     settings:
       number_format: '0.##'   #数字格式化，无小数点
-    
+wechat: #微信多个公众号配置
+  configs:
+    - appId:
+      secret:
+      token:
+      aesKey:
+
+logging:
+   file: ./logs/app.log
+community:
+   multi:
+     authentication-pattern: /activity/{appKey}/**
         

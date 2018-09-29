@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width; initial-scale=1.4;  minimum-scale=1.0; maximum-scale=2.0,maximum-scale=1, user-scalable=no">
+		<style type="text/css">
+			body {
+				margin: 0px;
+				padding: 0px;
+				font: 14px Helvetica Neue, Helvetica, PingFang SC, \5FAE\8F6F\96C5\9ED1, Tahoma, Arial, sans-serif;
+				background: #f7f5f5;
+			}
+			
+			.container {
+				font-size: 0.9rem;
+				margin: 5px auto;
+				width: 90%;
+			}
+			
+			.header,
+			.middle,
+			.footer {
+				padding: 15px 0px;
+			}
+			
+			.header .left,
+			.middle .left,
+			.footer .left {
+				width: 49%;
+				float: left;
+				text-indent: 2em;
+			}
+			
+			.clearfix {
+				clear: both;
+			}
+			
+			.header .right,
+			.middle .right,
+			.footer .right {
+				text-indent: 2em;
+				width: 49%;
+				float: right;
+			}
+			
+			.header .img_1,
+			.header .img_2,
+			.footer .img_1,
+			.footer .img_2 {
+				text-indent: 0px;
+				width: 80%;
+				margin-left: 20%;
+			}
+			
+			.header .img_2,
+			.footer .img_2 {
+				width: 90%;
+				margin-top: -25px;
+				margin-left: 0;
+			}
+			
+			.header .img_1 img,
+			.header .img_2 img,
+			.middle .img img,
+			.footer .img_1 img,
+			.footer .img_2 img {
+				width: 90%;
+			}
+			
+			.middle .img {
+				padding: 10% 0px;
+				width: 100%;
+				text-indent: 0px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="container">
+			<div class="header">
+				<div class="left">@content</div>
+				<div class="right">
+					<div class="img_1">
+						<img src="@image" />
+					</div>
+					<div class="img_2">
+						<img src="@image" />
+					</div>
+				</div>
+				<div class="clearfix"></div>
+			</div>
+			<div class="middle">
+				<div class="left">
+					<div class="img">
+						<img src="@image" />
+					</div>
+				</div>
+				<div class="right">@content</div>
+				<div class="clearfix"></div>
+			</div>
+			<div class="footer">
+				<div class="left">@content</div>
+				<div class="right">
+					<div class="img_1">
+						<img src="@image" />
+					</div>
+					<div class="img_2">
+						<img src="@image" />
+					</div>
+				</div>
+				<div class="clearfix"></div>
+			</div>
+		</div>
+	</body>
+
+</html>

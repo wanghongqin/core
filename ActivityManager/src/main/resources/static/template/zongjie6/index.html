@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" id="viewport" content="width=320, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<script src="./js/template-web.js"></script>
+		<script src="./js/jquery-2.0.2.min.js"></script>
+		<script type="text/template" id="title">
+			<section style="display: flex;justify-content: center;align-items: center;">
+				<section>
+					<p style="font-size: 25px; color:#4e8447;margin-right: 2px;">{{@value}}</p>
+				</section>
+				<section style="width: 53px; flex-shrink: 0;"><img src="img5/titlePicture5.png" alt="" style="max-width: 100%;"></section>
+			</section>
+		</script>
+
+		<script type="text/template" id="title2">
+			<section style="margin: 10px auto;display: flex;justify-content: center;align-items: center;">
+				<section style="width: 30px;flex-shrink: 0;"><img src="img5/iceLeft5.png" alt="" style="max-width: 100%;"></section>
+				<section style="margin-left: 2px;margin-right: 3px;">
+					<p style="font-size: 25px; color:#4e8447;">{{@value}}</p>
+				</section>
+				<section style="width: 30px;flex-shrink: 0"><img src="img5/iceRight5.png" alt="" style="max-width: 100%;"></section>
+			</section>
+		</script>
+
+		<script type="text/template" id="title3">
+			<section style="font-family: Arial; border: 0px none; padding: 0px; color: #319369; margin-top: 6%;">
+				<section style="-webkit-box-reflect:below 0px -webkit-gradient(linear, 0% 0%, 0% 100%, from(transparent), color-stop(0.2, transparent), to(rgba(250, 250, 250, 0.3))); margin-top:15px;line-height:20px;">
+					<p style="display: block; -webkit-margin-before: 1em; -webkit-margin-after: 1em; -webkit-margin-start: 0px; -webkit-margin-end: 0px; text-align: center;  "><span style="font-family:微软雅黑; font-size:25px"><strong style="font-size:25px">{{@value}}</strong></span></p>
+				</section>
+			</section>
+		</script>
+
+		<script type="text/template" id="paragraph">
+			<section style="margin:10px auto;display: flex;flex-direction: column;">
+				<section style="background-image:url(img5/paragraphPicture5.png);background-repeat: no-repeat;background-size:350px auto;background-position:right top;">
+					<section style="padding-top: 70px;padding-right: 71px;margin-left: 3px;">
+						<p style="font-size: 15px;line-height: 1.5;color: #666666;">{{@value}} </p>
+					</section>
+				</section>
+			</section>
+		</script>
+		<script type="text/template" id="paragraph2">
+			<section style="margin:10px auto;display: flex;flex-direction: column;">
+				<section style="background-image:url(img5/littleKid5.png);background-repeat: no-repeat;background-size:100%;background-position:left bottom;">
+					<section style="padding-left: 100px;padding-bottom: 70px;padding-right: 5px;">
+						<p style="font-size: 20px;line-height: 1.5;color: #666666; margin-top: 15%;">{{@value}}</p>
+					</section>
+				</section>
+			</section>
+		</script>
+
+		<script type="text/template" id="paragraph3">
+			<section style="margin: 10px auto;display: flex;flex-direction: column;align-items: center;margin-left: 18px;margin-right: 18px;">
+				<section style="width: 94px;align-self: flex-end;z-index: 5;margin-bottom: -96px;margin-right: -17px;"><img src="img5/first5.png" alt="" style="max-width:100%;"></section>
+				<section style="padding:20px 19px 19px 21px;border: 2px #60bf8a solid; width: 84%;">
+					<p style="color: #000333;font-size: 15px;line-height: 1.5;margin: 0;">{{@value}}</p>
+				</section>
+				<section style="width: 45px;align-self: flex-start;margin-top: -90px;margin-left: -18px;"><img src="img5/second5.png" alt="" style="max-width: 100%;"></section>
+			</section>
+		</script>
+
+		<script type="text/template" id="img">
+			<div style="border: 2px solid #c3ab6c; width: 90%; margin-left: 5%; margin-top: 5%;">
+				<img src="{{@value}}" style="width: 100%; display: block;" />
+			</div>
+		</script>
+
+		<script type="text/template" id="img2">
+			<div style="text-align: center; width: 80%; margin-top: 5%; margin-left: 10%;"><img src="{{@value}}" style="width: 100%;" /></div>
+		</script>
+
+		<script type="text/template" id="img3">
+			<section style="max-width:94%; margin-left: 3%;">
+				{{if value.length ==2}} {{each value}} {{if $index==0}}
+				<section style="display:flex;align-items:center;">
+					<section style="flex-shrink:0;padding: 5px; width: 46%;">
+						<img src="{{@$value}}" style="max-width:100%;vertical-align:bottom;">
+					</section>
+					<section>
+						<p style="margin:0px;font-size:22px;color:#333;line-height:1.8;">​<br></p>
+					</section>
+				</section>
+				{{else if $index==1}}
+				<section style="display:flex;align-items:center;">
+					<p style="margin:0px;font-size:15px;line-height:1.5;color:#333;"> </p>
+					<section style="width:46%;flex-shrink:0;padding:5px;background-color:#fff;margin-left:51%;margin-top:-40px;">
+						<img src="{{@$value}}" style="max-width:100%;vertical-align:bottom;">
+					</section>
+				</section>
+				{{else}} {{/if}} {{/each}} {{/if}}
+			</section>
+		</script>
+
+		<script type="text/template" id="img4">
+			<section style="max-width: 80% !important;margin:0px auto;">
+				{{if value.length ==3}} {{each value}} {{if $index==0}}
+				<section style="display:flex;text-align:center;">
+					<section style="margin:0px auto;">
+						<img src="{{@$value}}" style="margin:0px auto;text-align:center; width: 91%;">
+					</section>
+				</section>
+				<section style="display:flex;margin-left: 5%;">
+					<section style="display:flex;margin-top:10px;">
+						{{else if $index==1}}
+						<section style="flex:1;">
+							<img src="{{@$value}}" style="width: 91%;">
+						</section>
+						{{else if $index==2}}
+						<section style="flex:1;">
+							<img src="{{@$value}}" style="width: 91%;">
+						</section>
+					</section>
+				</section>
+				{{else}} {{/if}} {{/each}} {{/if}}
+			</section>
+		</script>
+
+		<script type="text/template" id="img5">
+			<section>
+				<section style="display:flex;">
+					{{if value.length ==4}} {{each value}} {{if $index==0}}
+					<section style="width:50%;padding: 5px;border-radius: 10px;margin-bottom: 5px;">
+						<section style="line-height: 0em;padding: 2px;"><img src="{{@$value}}" style="width: 100%;vertical-align:top;"></section>
+					</section>
+					{{else if $index==1}}
+					<section style="width:50%;padding: 5px;border-radius: 10px; margin-bottom: 5px;">
+						<section style="line-height: 0em;padding: 2px;"><img src="{{@$value}}" style="width: 100%;vertical-align:top;"></section>
+					</section>
+				</section>
+				<section style="display:flex;">
+					{{else if $index==2}}
+					<section style="width:50%;padding: 5px; border-radius: 10px; margin-bottom: 5px;">
+						<section style="line-height: 0em; padding: 2px;"><img src="{{@$value}}" style="width: 100%;vertical-align:top;"></section>
+					</section>
+					{{else if $index==3}}
+					<section style="width:50%;padding: 5px;border-radius: 10px; margin-bottom: 5px;">
+						<section style="line-height: 0em;padding: 2px;"><img src="{{@$value}}" style="width: 100%;vertical-align:top;"></section>
+					</section>
+				</section>
+				{{else}} {{/if}} {{/each}} {{/if}}
+			</section>
+		</script>
+
+		<script type="text/javascript">
+			var template_meta = {
+				title: ['title', 'title2', 'title3'],
+				paragraph: ['paragraph', 'paragraph2', 'paragraph3'],
+				image: ['img', 'img2', 'img3', 'img4', 'img5']
+			};
+			(function(win) {
+
+				win.template_meta = {
+					title: ['title', 'title2', 'title3'],
+					paragraph: ['paragraph', 'paragraph2', 'paragraph3'],
+					image: ['img', 'img2', 'img3', 'img4', 'img5']
+				};
+
+				win.template_meta.render = function(config) {
+					var html = "";
+					var count = {};
+					var paragraph_num = 0;
+					var image_num = 0;
+					var special_num = 0;
+					var arry;
+					config.resources.map(function(item, i) {
+						count[item.type] = (count[item.type] || 0) + 1;
+						var t_list = template_meta[item.type];
+						if(item.type == 'title') {
+							if(!isNaN(parseInt(item.value))) { //当标题为数字，不修改title样式
+								if(special_num == (template_meta[item.type].length - 1)) { //sepcial_num将越界，重新循环
+									var tmp = t_list[special_num];
+									for(var num = i + 1; num < config.resources.length; num++) { //找到下一个title，如果为数字，将模板标题模板存储起来
+										if(config.resources[num].type == 'title') {
+											if(!isNaN(parseInt(config.resources[num].value))) {
+												break;
+											} else {
+												special_num = 0;
+												break;
+											}
+										}
+									}
+								} else {
+									var tmp = t_list[special_num];
+									for(var num = i + 1; num < config.resources.length; num++) { //找到下一个title，将模板标题模板存储起来
+										if(config.resources[num].type == 'title') {
+											if(!isNaN(parseInt(config.resources[num].value))) {
+												break;
+											} else {
+												special_num++;
+												break;
+											}
+										}
+									}
+								}
+							} else { //标题不为数字
+								if(special_num == (template_meta[item.type].length - 1)) { //sepcial_num将越界，重新循环
+									var tmp = t_list[special_num];
+									special_num = 0;
+								} else {
+									var tmp = t_list[special_num];
+									special_num++;
+								}
+							}
+						} else if(item.type == 'image') {
+							var arrys = item.value.split(",");
+							if(arrys.length > 1) { //如果为连续图片，选择img3开始的模板
+								var tmp = t_list[arrys.length];
+								arry = { "value": arrys };
+								var h1 = template(tmp, arry);
+								html += h1;
+								return html;
+							} else if(arrys.length == 1) { //单图，从前两个图片模板中随机选择
+								var x = 0;
+								var y = 1;
+								image_num = parseInt(Math.random() * (y - x + 1) + x);
+								var tmp = t_list[image_num];
+							}
+
+						} else if(item.type == 'paragraph') {
+							if(i != 0 && i != (config.resources.length - 1)) {
+								for(var num = i - 1; num > -1; num--) {
+									if(config.resources[num].type == 'title') {
+										if(!isNaN(parseInt(config.resources[num].value))) { //前一个title为数字
+											for(var mock = i + 1; mock < config.resources.length; mock++) {
+												if(config.resources[mock].type == 'title') {
+													if(!isNaN(parseInt(config.resources[mock].value))) { //后一个title为数字
+														var tmp = t_list[paragraph_num];
+														var h = template(tmp, item);
+														html += h;
+														return html;
+													} else { //后一个title不为数字，添加分割线
+														if(paragraph_num == (template_meta[item.type].length - 1)) {
+															var tmp = t_list[paragraph_num];
+															paragraph_num = 0;
+															var h = template(tmp, item);
+															html += h;
+															html += '<section style="margin: 10px auto; width: 100%;margin-top: 30px;"><img src="img5/split5.png" alt="" style="width: 100%;"></section>';
+															return html;
+														} else {
+															var tmp = t_list[paragraph_num];
+															paragraph_num++;
+															var h = template(tmp, item);
+															html += h;
+															html += '<section style="margin: 10px auto; width: 100%;margin-top: 30px;"><img src="img5/split5.png" alt="" style="width: 100%;"></section>';
+															return html;
+														}
+													}
+												}
+											}
+											if(special_num == (template_meta[item.type].length - 1)) { //后面无title
+												special_num = 0;
+												var tmp = t_list[special_num];
+
+											} else {
+												special_num++;
+												var tmp = t_list[special_num];
+											}
+										} else { //前一个title不为数字
+											if(paragraph_num == (template_meta[item.type].length - 1)) {
+												var tmp = t_list[paragraph_num];
+												paragraph_num = 0;
+											} else {
+												var tmp = t_list[paragraph_num];
+												paragraph_num++;
+											}
+											var h = template(tmp, item);
+											html += h;
+											return html;
+										}
+									}
+
+								}
+								if(special_num == (template_meta[item.type].length - 1)) { //前后无title
+									var tmp = t_list[special_num];
+									special_num = 0;
+
+								} else {
+									var tmp = t_list[special_num];
+									special_num++;
+								}
+							} else { //paragraph处于第一或者最后一个
+								if(special_num == (template_meta[item.type].length - 1)) {
+									var tmp = t_list[special_num];
+									special_num = 0;
+
+								} else {
+									var tmp = t_list[special_num];
+									special_num++;
+								}
+							}
+						}
+						var h = template(tmp, item);
+						html += h;
+					});
+					return html;
+				}
+
+			})(window);
+
+			var config = window.config || {
+				title: "",
+				resources: [
+				]
+			};
+
+			$(function() {
+				var render = window.template_meta.render || function(config) {
+					var html = "";
+					var count = {};
+					var paragraph_num = 0;
+					var image_num = 0;
+					var special_num = 0;
+					var arry;
+					config.resources.map(function(item, i) {
+						count[item.type] = (count[item.type] || 0) + 1;
+						var t_list = template_meta[item.type];
+						if(item.type == 'title') {
+							if(!isNaN(parseInt(item.value))) { //当标题为数字，不修改title样式
+								if(special_num == (template_meta[item.type].length - 1)) { //sepcial_num将越界，重新循环
+									var tmp = t_list[special_num];
+									for(var num = i + 1; num < config.resources.length; num++) { //找到下一个title，如果为数字，将模板标题模板存储起来
+										if(config.resources[num].type == 'title') {
+											if(!isNaN(parseInt(config.resources[num].value))) {
+												break;
+											} else {
+												special_num = 0;
+												break;
+											}
+										}
+									}
+								} else {
+									var tmp = t_list[special_num];
+									for(var num = i + 1; num < config.resources.length; num++) { //找到下一个title，将模板标题模板存储起来
+										if(config.resources[num].type == 'title') {
+											if(!isNaN(parseInt(config.resources[num].value))) {
+												break;
+											} else {
+												special_num++;
+												break;
+											}
+										}
+									}
+								}
+							} else { //标题不为数字
+								if(special_num == (template_meta[item.type].length - 1)) { //sepcial_num将越界，重新循环
+									var tmp = t_list[special_num];
+									special_num = 0;
+								} else {
+									var tmp = t_list[special_num];
+									special_num++;
+								}
+							}
+						} else if(item.type == 'image') {
+							var arrys = item.value.split(",");
+							if(arrys.length > 1) { //如果为连续图片，选择img3开始的模板
+								var tmp = t_list[arrys.length];
+								arry = { "value": arrys };
+								var h1 = template(tmp, arry);
+								html += h1;
+								return html;
+							} else if(arrys.length == 1) { //单图，从前两个图片模板中随机选择
+								var x = 0;
+								var y = 1;
+								image_num = parseInt(Math.random() * (y - x + 1) + x);
+								var tmp = t_list[image_num];
+							}
+
+						} else if(item.type == 'paragraph') {
+							if(i != 0 && i != (config.resources.length - 1)) {
+								for(var num = i - 1; num > -1; num--) {
+									if(config.resources[num].type == 'title') {
+										if(!isNaN(parseInt(config.resources[num].value))) { //前一个title为数字
+											for(var mock = i + 1; mock < config.resources.length; mock++) {
+												if(config.resources[mock].type == 'title') {
+													if(!isNaN(parseInt(config.resources[mock].value))) { //后一个title为数字
+														var tmp = t_list[paragraph_num];
+														var h = template(tmp, item);
+														html += h;
+														return html;
+													} else { //后一个title不为数字，添加分割线
+														if(paragraph_num == (template_meta[item.type].length - 1)) {
+															var tmp = t_list[paragraph_num];
+															paragraph_num = 0;
+															var h = template(tmp, item);
+															html += h;
+															html += '<section style="margin: 10px auto; width: 100%;margin-top: 30px;"><img src="img5/split5.png" alt="" style="width: 100%;"></section>';
+															return html;
+														} else {
+															var tmp = t_list[paragraph_num];
+															paragraph_num++;
+															var h = template(tmp, item);
+															html += h;
+															html += '<section style="margin: 10px auto; width: 100%;margin-top: 30px;"><img src="img5/split5.png" alt="" style="width: 100%;"></section>';
+															return html;
+														}
+													}
+												}
+											}
+											if(special_num == (template_meta[item.type].length - 1)) { //后面无title
+												special_num = 0;
+												var tmp = t_list[special_num];
+
+											} else {
+												special_num++;
+												var tmp = t_list[special_num];
+											}
+										} else { //前一个title不为数字
+											if(paragraph_num == (template_meta[item.type].length - 1)) {
+												var tmp = t_list[paragraph_num];
+												paragraph_num = 0;
+											} else {
+												var tmp = t_list[paragraph_num];
+												paragraph_num++;
+											}
+											var h = template(tmp, item);
+											html += h;
+											return html;
+										}
+									}
+
+								}
+								if(special_num == (template_meta[item.type].length - 1)) { //前后无title
+									var tmp = t_list[special_num];
+									special_num = 0;
+
+								} else {
+									var tmp = t_list[special_num];
+									special_num++;
+								}
+							} else { //paragraph处于第一或者最后一个
+								if(special_num == (template_meta[item.type].length - 1)) {
+									var tmp = t_list[special_num];
+									special_num = 0;
+
+								} else {
+									var tmp = t_list[special_num];
+									special_num++;
+								}
+							}
+						}
+						var h = template(tmp, item);
+						html += h;
+					});
+					return html;
+				}
+				$("#main").html(render(config));
+			});
+		</script>
+	</head>
+
+	<body>
+		<section style="display: flex;justify-content: center;align-items: center;">
+			<section style="width: 280px; margin-right: 10px;"><img src="img5/followTitle.png" alt="" style="width: 100%;"></section>
+			<section style="width: 50px;"><img src="img5/followPicture.png" alt="" style="width: 100%;"></section>
+		</section>
+		<div id="main"></div>
+		<section style="margin: 10px auto; width: 100%;margin-top: 30px;"><img src="img5/end5.png" alt="" style="width: 100%;"></section>
+		<section style="background-image:url(img5/endKid5.png);margin:0px auto;background-repeat: no-repeat;background-size: auto 100%;background-position: center;padding-top: 110px;
+    padding-right: 138px;">
+	</body>
+
+</html>

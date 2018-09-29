@@ -8,6 +8,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	<title>审核资源</title>
 	<script src="${request.contextPath}/js/jquery.min.js" type="text/javascript"></script>
+	<link rel="stylesheet" href="${request.contextPath}/css/loading.css">
 	<!-- 引入样式 -->
 	<link rel="stylesheet" href="https://unpkg.com/vant/lib/vant-css/index.css">
 	<!-- 引入组件 -->
@@ -40,6 +41,8 @@
 			width: 100%;
 			line-height: 50px;
 			box-shadow: 0 0 20px 0 hsla(0, 0%, 7%, .1), 0 0 0 0 hsla(0, 0%, 7%, .1);
+			z-index: 9999;
+			background: #fff;
 		}
 
 		.txt {
@@ -89,17 +92,25 @@
 		.van-icon::before {
 			margin-top: 2px;
 		}
+
 	</style>
 </head>
 
 <body>
-
 	<div id="app">
-		<van-checkbox-group v-model="result" class="buttom">
+		<div id="loading" :class="loadvisibility">
+			<div class="root">
+				<div class="loading">
+					<van-loading color="white" />
+				</div>
+				<div>数据加载中</div>
+			</div>
+		</div>
+		<van-checkbox-group v-model="result">
 			<van-pull-refresh v-model="isLoading" @refresh="onRefresh">
-				<van-list v-model="loading" :finished="finished" @load="onLoad" id="items" class="buttom row">
+				<van-list v-model="loading" :finished="finished" @load="onLoad" offset='50' id="items" class="buttom row">
 					<div class="item" v-for="(item,index) in list" @click="toggle(index)">
-						<img :src="item.resource.resourcePath" @load="checkHeight" />
+						<img :src="'${request.contextPath}/'+item.resource.resourcePath" @load="checkHeight" />
 						<van-checkbox :name="item.resource.id" ref="checkboxes" />
 					</div>
 				</van-list>
@@ -120,6 +131,7 @@
 			el: "#app",
 			data: {
 				isLoading: false,
+				loadvisibility: '',
 				list: [],
 				loading: false,
 				finished: false,
@@ -128,7 +140,8 @@
 				colHeight: [0, 0, 0],
 				totalWidth: 0,
 				result: [],
-				isAjax: false
+				isAjax: false,
+				count: 1
 			},
 			created: function () {
 				this.totalWidth = $(document).width();
@@ -137,8 +150,8 @@
 					this.result = resouceIds.split(",").map(function (data) {
 						return +data;
 					});
-				}
-
+				}				
+				this.number = this.result.length;
 			},
 			methods: {
 				onRefresh: function () {
@@ -146,7 +159,7 @@
 					context.page = 1;
 					if (context.isAjax) return;
 					context.finished = false;
-					context.isAjax = true;
+					context.isAjax = true; 
 					axios.post("/ActivityResourceApi/queryLimit", {
 						currentPage: context.page,
 						pagesize: 15,
@@ -156,8 +169,7 @@
 						context.loading = false;
 						context.isLoading = false;
 						context.isAjax = false;
-						context.list = result.content;
-						context.number = result.totalElements;
+						context.list = result.content; 
 						if (result.totalPages == context.page || result.totalPages == 0) {
 							context.finished = true;
 						}
@@ -169,6 +181,7 @@
 					if (context.isAjax) return;
 					if (context.finished) return;
 					context.isAjax = true;
+					context.loadvisibility = '';
 					axios.post("/ActivityResourceApi/queryLimit", {
 						currentPage: context.page,
 						pagesize: 15,
@@ -179,7 +192,6 @@
 						context.loading = false;
 						context.isAjax = false;
 						context.list = context.list.concat(result.content);
-						context.number = context.result.length;
 						if (result.totalPages == context.page || result.totalPages == 0) {
 							context.finished = true;
 						}
@@ -209,13 +221,15 @@
 						console.log(result);
 						if (result.resultType) {
 							context.$toast.success(result.message);
-							window.location.href = "${request.contextPath}/MobileActivity/Index"
+
+							//window.location.href = "${request.contextPath}/MobileActivity/Index"
 						} else {
 							context.$toast.fail(result.message);
 						}
 					});
 				},
 				Calculation: function (it) {
+					var context = this;
 					var totalWidth = this.totalWidth;
 					var eachWidth = it.width();
 					var eachHeight = it.height();
@@ -243,6 +257,9 @@
 
 					//让大盒子根据最高的列设置高度
 					$("#items").css("height", _.max(this.colHeight));
+					if (context.list.length == context.count++) {
+						context.loadvisibility = 'none'
+					}
 				}
 			}
 		})

@@ -1,8 +1,8 @@
  // var http = [];
 
  //axios 配置
- axios.defaults.timeout = 5000
- axios.defaults.baseURL = "http://192.168.1.48:10189/ActivityManager/";
+ axios.defaults.timeout = 15000
+ axios.defaults.baseURL = "http://activity.ngork.guomer.cn/";
 
  //http request 拦截配置
  axios.interceptors.request.use(

@@ -145,11 +145,29 @@
 			font-size: 0.9rem;
 			font-weight: 600;
 		}
+
+		#loading {
+			position: fixed;
+			height: 100%;
+			width: 100%;
+			z-index: 99999;
+			background: rgba(0, 0, 0, .5);
+			display: none;
+		}
+
+		.van-loading {
+			margin: 50% auto;
+		}
 	</style>
 </head>
 
 <body>
 	<div id="app">
+
+		<div id="loading">
+			<van-loading type="spinner" color="white" />
+		</div>
+
 		<div class="header">
 			<van-steps :active="active" class="steps">
 				<van-step>活动基本信息</van-step>
@@ -338,11 +356,11 @@
 				enrollTemplete: '',
 				summaryTemplete: '',
 				enrollTempletetemp: '',
-				summaryTempletetemp: '',
+				summaryTempletetemp: 'dd\'dd\'dd',
 				colenrollHeight: [0, 0],
 				colsummaryHeight: [0, 0],
 				totalWidth: 0,
-				className: "disable",
+				className: 'disable',
 				classPoint: 'disable',
 				activity: {
 					rules: {
@@ -461,16 +479,20 @@
 				var time = "${activity.getStartTime()}";
 				if (time.indexOf(".") > 0) {
 					time = time.substring(0, time.lastIndexOf(".")).replace(/-/g, "/");
+				} else {
+					time = time.replace(/-/g, "/");
 				}
 				if (!isNaN(new Date(time))) {
 					var value = new Date(time);
-					context.activity.data.startTime = value.format("yyyy-MM-dd hh:mm:ss");
+					if (context.activity.data.Id > 0) {
+						context.activity.data.startTime = value.format("yyyy-MM-dd hh:mm:ss");
+					}
 					context.Time = value;
 				} else {
 					context.Time = new Date();
 				}
 
-				if (context.activity.data.Id != 0) { 
+				if (context.activity.data.Id != 0) {
 					context.enrollTemplete = '${attach.getEnrollTemplete().getAliasName()}';
 					context.enrollTempletetemp = '${attach.getEnrollTemplete().getAliasName()}';
 					context.summaryTemplete = '${attach.getSummaryTemplete().getAliasName()}';
@@ -486,9 +508,11 @@
 					var context = this;
 					this.validate(this.activity, function (value) {
 						if (value) {
+							$("#loading").show();
 							axios.post("/ActivityApi/Edit", context.activity.data).then(function (response) {
 								var result = response.data;
 								console.log(result);
+								$("#loading").hide();
 								if (result.resultType) {
 									if (context.activity.data.activityType != "${activity.getActivityType()}") {
 										context.activityAttach.data.attendNumber = "0";
@@ -500,6 +524,9 @@
 								} else {
 									context.$toast.fail(result.message);
 								}
+							}).catch(function (err) {
+								$("#loading").hide();
+								context.$toast.fail("网络错误，请重试");
 							});
 						}
 					});
@@ -508,15 +535,20 @@
 					var context = this;
 					this.validate(this.activityAttach, function (value) {
 						if (value) {
+							$("#loading").show();
 							axios.post("/ActivityAttachApi/Edit", context.activityAttach.data).then(function (response) {
 								var result = response.data;
 								console.log(result);
+								$("#loading").hide();
 								if (result.resultType) {
 									context.$toast.success(result.message);
 									window.location.href = "${request.contextPath}/MobileActivity/Index"
 								} else {
 									context.$toast.fail(result.message);
 								}
+							}).catch(function(err){
+								$("#loading").hide();
+								context.$toast.fail("网络错误，请重试");
 							})
 						}
 					});
@@ -717,11 +749,13 @@
 				},
 				enrollTempleteValue: function () {
 					var context = this;
+					$("#loading").show();
 					this.GetTemplete("enroll");
 					context.enrollTempleteshow = true;
 				},
 				summaryTempleteValue: function () {
 					var context = this;
+					$("#loading").show();
 					this.GetTemplete("summary");
 					context.summaryTempleteshow = true;
 				},
@@ -809,13 +843,14 @@
 						type: type
 					}).then(function (response) {
 						var data = response.data;
+						$("#loading").hide();
 						if (type == 'enroll') {
-							$("#enrollTemplete").height($(window).height() - 160); 
+							$("#enrollTemplete").height($(window).height() - 160);
 							context.enrollTempletes = data;
 						}
 						if (type == 'summary') {
-							$("#summaryTemple").height($(window).height() - 160);							
-							context.summaryTempletes = data; 
+							$("#summaryTemple").height($(window).height() - 160);
+							context.summaryTempletes = data;
 						}
 					});
 				},
